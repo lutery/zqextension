@@ -1,0 +1,15 @@
+$.ajax({
+  url: '/api/public/room.viewer'
+, async: false
+, data: { uid: oPageConfig.oRoom.uid, _t: Math.floor($.now() / 60000) }
+, type: 'get'
+, dateType: 'json'
+}).done(function(data){
+  window.oPageConfig.oViewer = data.data;
+  yp.pub('page/cookie/oViewer', { cookie_value: window.oPageConfig.oViewer });
+  if( 0 == data.code ){
+    yp.pub('page/ip/save', { ip: data.data.clientIp, index: 1 });
+  }
+}).fail(function(){
+  window.oPageConfig.oViewer = {};
+});

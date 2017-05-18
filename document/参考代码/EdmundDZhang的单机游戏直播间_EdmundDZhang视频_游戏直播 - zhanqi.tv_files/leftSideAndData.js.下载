@@ -1,0 +1,535 @@
+/*
+* 左侧panel
+*/
++function(){
+
+  var oLeftSide = {
+    _ui: {}
+  , sysStatusChange: false
+  , init: function(){
+      this.view();
+      this.bindEvent();
+      this.listenYpEvent();
+
+      // 没有设置cookie，页面默认要求收起左侧、窗口宽度小于1200
+      // 有设置cookie，并且是关闭状态
+      if( ( null == $.cookie('open_left') && ( window.bCloseLeft || 1200 >= $(window).width()) ) || (null != $.cookie('open_left') && 0 == $.cookie('open_left')) ){
+        this.fCollapsePanel(true);
+      } else {
+        this.fLeftPanelResize();
+      }
+    }
+  , view: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$body = $('body');
+      _ui.$win = $(window);
+
+      _ui.$js_left_panel_collapse_btn = $('.js-left-panel-collapse-btn');  // 折叠按钮
+      _ui.$js_left_panel_more = $('#js-left-panel-more');  // 展开的左侧栏
+      _ui.$js_left_panel = $('#js-left-panel');  // 缩小的左侧栏
+
+      // 搜索
+      _ui.$search_key_input = $('#left-panel-search-key-input');
+      _ui.$search_key_input_label = $('#left-panel-search-key-input-label');
+      _ui.$search_btn = $('#left-panel-search-btn');
+    }
+  , bindEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      // 左侧栏展开、缩起
+      self.fBindCollapsePanel();
+
+      // 左侧栏搜索
+      _ui.$search_key_input.on('keypress', function(e){
+        if(13 == e.keyCode){
+          if( '' != _ui.$search_key_input.val() ){
+            _ui.$search_key_input.closest('form')[0].submit();
+          }
+        }
+      }).on('focus', function(){
+        _ui.$search_key_input_label.hide();
+      }).on('blur', function(){
+        if('' == _ui.$search_key_input.val()){
+          _ui.$search_key_input_label.show();
+        }
+      });
+      _ui.$search_key_input_label.on('click', function(e){
+        e.preventDefault();
+        _ui.$search_key_input.focus();
+      });
+      _ui.$search_btn.on('click', function(e){
+        e.preventDefault();
+        if( '' != _ui.$search_key_input.val() ){
+          _ui.$search_key_input.closest('form')[0].submit();
+        } else {
+          _ui.$search_key_input.focus();
+        }
+      });
+    }
+  , fBindCollapsePanel: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$js_left_panel_collapse_btn.on('click', function(e){
+        e.preventDefault();
+        var flag = _ui.$body.hasClass('open-left');
+        var t = new Date();
+        t.setTime( t.getTime() + 2592000000 );
+        $.cookie('open_left', !flag ? 1 : 0, { expires: t, path: '/' });
+        self.fCollapsePanel(flag);
+        if( flag ){
+          hmtTongJi('room', 'left_set_close', self.sysStatusChange ? '' : 'changeDefault');
+        } else {
+          hmtTongJi('room', 'left_set_close', self.sysStatusChange ? '' : 'changeDefault');
+        }
+        !self.sysStatusChange && (self.sysStatusChange = true);
+      });
+    }
+  , fCollapsePanel: function(flag){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$body.toggleClass('open-left', !flag);
+      yp.pub('page/leftpanel/collapse');
+      self.fLeftPanelResize();
+    }
+  , listenYpEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      yp.sub('ui/resize', function(){
+        self.fLeftPanelOpenSet();
+        self.fLeftPanelResize();
+      });
+
+      yp.sub('page/collapse/left', function(e, data){
+        self.fCollapsePanel( !!data.collapse );
+      });
+
+      yp.sub('page/leftpanel/resize', function(){
+        self.fLeftPanelResize();
+      });
+    }
+    // 窗口大小改变时，判断是否要展开左侧
+  , fLeftPanelOpenSet: function(){
+      var self = this
+        , _ui = self._ui;
+
+      var hasClass = _ui.$body.hasClass('open-left');
+      if( null == $.cookie('open_left') && window.bCloseLeft ){
+        if( hasClass ){
+          _ui.$body.removeClass('open-left');
+          yp.pub('page/leftpanel/collapse');
+          self.sysStatusChange = false;
+        }
+      } else if( null == $.cookie('open_left') || 0 != $.cookie('open_left') ){
+        var toAddClass = 1200 < $(window).width();
+        if( hasClass != toAddClass ){
+          _ui.$body.toggleClass('open-left', toAddClass);
+          yp.pub('page/leftpanel/collapse');
+          self.sysStatusChange = false;
+        }
+      }
+    }
+    // 窗口大小改变时，更改左侧栏高度
+  , fLeftPanelResize: function(){
+      var self = this
+        , _ui = self._ui
+        , winHeight = _ui.$win.height();
+
+      _ui.$js_left_panel.height( winHeight );
+      _ui.$js_left_panel_more.height(winHeight);
+      if( _ui.$body.hasClass('open-left') ){
+        _ui.$js_left_panel_more.find('.js-scroll').add( _ui.$js_left_panel_more.find('.slimScrollDiv') ).height( winHeight - 160 - _ui.$js_left_panel_more.find('.js-login-area').outerHeight() );
+      }
+
+      // 缩小状态的导航高度
+      // var nav_item_height = _ui.$js_left_panel.find('.menu li').eq(0).outerHeight()
+      //   , menu_height = Math.floor( ( winHeight - _ui.$js_left_panel.find('.js-login-area').outerHeight() - _ui.$js_left_panel_collapse_btn.outerHeight() ) / nav_item_height ) * nav_item_height;
+      // _ui.$js_left_panel.find('.menu').height(menu_height);
+    }
+  };
+
+  oLeftSide.init();
+}();
+
+yp.ready(function(){
+
+  var oLeftUser = {
+    _ui: {}
+  , init: function(){
+      var self = this;
+
+      self.view();
+      self.bindEvent();
+      self.listenYpEvent();
+      self.fBeLogin();
+    }
+  , view: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$js_left_panel_more = $('#js-left-panel-more');  // 展开的左侧栏
+      _ui.$js_left_panel = $('#js-left-panel');  // 缩小的左侧栏
+
+      _ui.$login_area_more = _ui.$js_left_panel_more.find('.js-login-area');
+      _ui.$login_area = _ui.$js_left_panel.find('.js-login-area');
+
+      _ui.$left_follow_panel = _ui.$js_left_panel.find('.js-left-follow-panel');
+
+      _ui.top_bar_follow_item_html = '<li class="clearfix ${statusClass}">\
+                                        <a href="${roomUrl}">\
+                                          <div class="img-box">\
+                                            <img src="${avatar}-medium" alt="${nickname}">\
+                                          </div>\
+                                          <div class="info-area clearfix">\
+                                            <div class="title-area">\
+                                              <i class="play-icon"></i>\
+                                              <span>${title}</span>\
+                                            </div>\
+                                            <div class="other-info clearfix">\
+                                              <span class="nickname">${nickname}</span>\
+                                              <span class="online">\
+                                                <i class="eyes-icon"></i>\
+                                                <span class="dv">${online}</span>\
+                                              </span>\
+                                            </div>\
+                                          </div>\
+                                        </a>\
+                                      </li>';
+    }
+  , bindEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      // 折叠的左侧栏，显示用户信息面板
+      _ui.$js_left_panel.on('mouseenter', '.js-hover-item', function(e){
+        var $this = $(this);
+        $this.addClass('hover');
+        if( 'follow' == $this.data('type') ){
+          self.fLoadFollowList(1);
+        }
+      }).on('mouseleave', '.js-hover-item', function(e){
+        var $this = $(this);
+        $this.removeClass('hover');
+      });
+
+      // 订阅列表
+      _ui.$left_follow_panel.find('.js-flow').smoothScroll().on('scroll', function(){
+        var $this = $(this)
+          , scrollTop = $this.scrollTop()
+          , winHeight = $this.height()
+          , top = $this[0].scrollHeight;
+
+        if( winHeight + scrollTop >= top) {
+          0 < self.follow.cnt && self.follow.totalPage > self.follow.page && self.fLoadFollowList(self.follow.page + 1);
+        }
+      });
+
+      _ui.$js_left_panel_more.on('click', '.js-login-btn', function(e){
+        e.preventDefault();
+        yp.pub('page/login');
+      });
+      _ui.$js_left_panel_more.on('click', '.js-logout-btn', function(e){
+        e.preventDefault();
+        yp.pub('page/logout');
+      });
+      _ui.$js_left_panel_more.on('click', '.js-regist-btn', function(e){
+        e.preventDefault();
+        yp.pub('page/regist');
+      });
+
+      _ui.$js_left_panel.on('click', '.js-login-btn', function(e){
+        e.preventDefault();
+        yp.pub('page/login');
+      });
+      _ui.$js_left_panel.on('click', '.js-logout-btn', function(e){
+        e.preventDefault();
+        yp.pub('page/logout');
+      });
+
+      _ui.$login_area_more.on('mouseenter', function(){
+        _ui.$login_area_more.hasClass('show-login') && _ui.$login_area_more.addClass('open-login');
+      }).on('mouseleave', function(){
+        _ui.$login_area_more.hasClass('show-login') && _ui.$login_area_more.removeClass('open-login');
+      });
+    }
+  , listenYpEvent: function(){
+      var self = this
+        , _ui = self.ui;
+
+      yp.sub('page/login/done', function(e){
+        self.fBeLogin();
+        self.fResetFollowPanel();
+      });
+
+      yp.sub('page/logout/done', function(e){
+        self.fBeLogin();
+      });
+
+      yp.sub('page/regist/done', function(e){
+        self.fBeLogin();
+        self.fResetFollowPanel();
+      });
+
+      yp.sub('page/inbox/unread', function(e, data){
+        self.fRenderLetterCnt(data.msg_count);
+      });
+
+      yp.sub('page/site/level/update/next', function(){
+        self.fUpdateLevelInfo(oPageConfig.oLoginInfo);
+      });
+
+      yp.sub('page/rich/change', function(e, data){
+        self.fUpdataRichInfo(data);
+      });
+    }
+    // 登录、注册切换
+  , fBeLogin: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$login_area_more.toggleClass('show-login', !!oPageConfig.oLoginInfo);
+      _ui.$login_area.toggleClass('show-login', !!oPageConfig.oLoginInfo);
+
+      _ui.$login_area_more.find('.js-tobe-anchor').show();
+      _ui.$login_area_more.find('.js-my-room').hide();
+      _ui.$login_area.find('.js-my-room').hide();
+
+      _ui.$js_left_panel.find('.js-follow-nav').hide();
+
+      _ui.$js_left_panel.find('.js-hover-item').removeClass('hover');
+
+      if( oPageConfig.oLoginInfo ){
+        self.fRenderUserInfo(oPageConfig.oLoginInfo);
+      }
+
+      yp.pub('page/leftpanel/resize');
+    }
+    // 显示用户信息
+  , fRenderUserInfo: function(data){
+      var self = this
+        , _ui = self._ui;
+
+      // 头像
+      _ui.$login_area_more.find('.js-user-avatar').attr('src', data.avatar + '-medium');
+      _ui.$login_area.find('.js-user-avatar').attr('src', data.avatar + '-medium');
+
+      // 昵称
+      _ui.$login_area_more.find('.js-user-nickname').html( data.nickname );
+      _ui.$login_area.find('.js-user-nickname').html( data.nickname );
+
+      // 等级
+      self.fUpdateLevelInfo(data);
+
+      // 金币
+      self.fUpdataRichInfo(data.rich);
+
+      // 私信数量
+      self.fRenderLetterCnt(data.letter);
+
+      // 主播
+      if( data.isAnchor ){
+        _ui.$login_area_more.find('.js-tobe-anchor').hide();
+        _ui.$login_area_more.find('.js-my-room').show().attr('href', oPageConfig.oUrl.sUrlHost.substr(0, oPageConfig.oUrl.sUrlHost.length - 1) + data.roomUrl);
+        _ui.$login_area.find('.js-my-room').show().attr('href', oPageConfig.oUrl.sUrlHost.substr(0, oPageConfig.oUrl.sUrlHost.length - 1) + data.roomUrl);
+      }
+
+      // 订阅按钮
+      _ui.$js_left_panel.find('.js-follow-nav').show();
+    }
+  , fUpdateLevelInfo: function(data){
+      var self = this
+        , _ui = self._ui;
+
+      // 等级图标
+      if( data && data.slevel ){
+        var level = data.slevel.level
+          , pos = data.slevel.pos
+          , type = data.slevel.type
+          , newClass = fLevelIconClass(level, pos, type)
+          , oldClass = _ui.$login_area_more.find('.js-slevel-icon').data('level')
+
+        if( oldClass ){
+          _ui.$login_area_more.find('.js-slevel-icon').removeClass(oldClass);
+          _ui.$login_area.find('.js-slevel-icon').removeClass(oldClass);
+        }
+
+        _ui.$login_area_more.find('.js-slevel-icon').addClass(newClass).data('level', newClass);
+        _ui.$login_area.find('.js-slevel-icon').addClass(newClass);
+      }
+      // 等级进度条
+      _ui.$login_area.find('.js-left-level-rate').css({ width: 0 });
+      if( data.slevel ){
+        var levelExpRate = data.slevel.nextexp ? ( data.slevel.curexp - data.slevel.levelexp ) / ( data.slevel.nextexp - data.slevel.levelexp ) * 100 : 100;
+        levelExpRate = levelExpRate.toFixed(2);
+        _ui.$login_area.find('.js-left-level-rate').css({ width: levelExpRate + '%' });
+      }
+    }
+  , fUpdataRichInfo: function(oRich){
+      var self = this
+        , _ui = self._ui;
+
+      if( oRich ){
+        _ui.$login_area_more.find('.js-gold-txt').html(oRich.gold);
+        _ui.$login_area_more.find('.js-coin-txt').html(oRich.coin);
+      } else {
+        _ui.$login_area_more.find('.js-gold-txt').html(0);
+        _ui.$login_area_more.find('.js-coin-txt').html(0);
+      }
+    }
+    // 显示私信数量
+  , fRenderLetterCnt: function(letter){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$login_area_more.find('.js-msg-count').html( 99 < letter ? 99 : letter ).toggle( 0 < +letter );
+      _ui.$login_area.find('.js-msg-count').html( 99 < letter ? 99 : letter ).toggle( 0 < +letter );
+    }
+    /******************** 订阅相关 **************************/
+  , fResetFollowPanel: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$left_follow_panel.find('.js-leftside-no-follow').show();
+      _ui.$left_follow_panel.find('.js-leftside-follow-loading').hide();
+      _ui.$left_follow_panel.find('.js-panel-list').html('').hide();
+      self.follow = { cnt: 0, page: 0, loaded: false, liveEnd: false, totalPage: 0, perPage: 6 };
+    }
+    // 载入订阅列表
+  , follow: { cnt: 0, page: 0, loaded: false, liveEnd: false, totalPage: 0, perPage: 6 }
+  , fLoadFollowList: function(page){
+      var self = this
+        , _ui = self._ui;
+
+      if( _ui.$left_follow_panel.data('ajaxing') ){
+        return false;
+      }
+
+      if( self.follow.liveEnd ){
+        return false;
+      }
+
+      if( 1 == page && self.follow.loaded ){
+        return false;
+      }
+
+      if( 1 != page && self.follow.totalPage < page ){
+        return false;
+      }
+
+      _ui.$left_follow_panel.find('.js-leftside-no-follow').hide();
+      _ui.$left_follow_panel.find('.js-leftside-follow-loading').show();
+
+      _ui.$left_follow_panel.data('ajaxing', true);
+      yp.ajax(yp.format('/api/user/follow.listsbypage?page=${page}&nums=${nums}', { page: page, nums: self.follow.perPage }), {
+        type: 'get'
+      , dataType: 'json'
+      }).always(function(){
+        _ui.$left_follow_panel.data('ajaxing', false);
+        _ui.$left_follow_panel.find('.js-leftside-follow-loading').hide();
+      }).done(function(data){
+        if( 0 == data.code ){
+          if( 1 == page ){
+            self.follow.cnt = data.data.cnt;
+            self.follow.loaded = true;
+            self.follow.totalPage = Math.ceil( self.follow.cnt / self.follow.perPage );
+            _ui.$left_follow_panel.find('.js-leftside-no-follow').toggle( 0 == self.follow.cnt ).find('.js-topbar-no-follow-txt').html('您还未关注任何主播');
+            _ui.$left_follow_panel.find('.js-panel-list').toggle( 0 < self.follow.cnt );
+          }
+          self.follow.page = page;
+          if( data.data.list.length ){
+            var sHtml = '';
+            yp.each(data.data.list, function(one){
+              one.statusClass = one.status == 4 ? 'on-live' : '';
+
+              if( !one.statusClass ){
+                self.follow.liveEnd = true;
+                return false;
+              }
+              
+              if( 1000000 < one.online ){
+                one.online = ( +one.online / 10000 ).toFixed(0) + '万';
+              } else if( 10000 < one.online ){
+                one.online = ( +one.online / 10000 ).toFixed(1) + '万';
+              }
+              sHtml += yp.format(_ui.top_bar_follow_item_html, one);
+            });
+            if( sHtml ){
+              _ui.$left_follow_panel.find('.js-panel-list').append(sHtml);
+            } else if( 1 == page ){
+              _ui.$left_follow_panel.find('.js-panel-list').hide();
+              _ui.$left_follow_panel.find('.js-leftside-no-follow').show().find('.js-topbar-no-follow-txt').html('您关注的主播还未开播');
+            }
+          }
+        } else {
+          (1 == page) && _ui.$left_follow_panel.find('.js-leftside-follow-loading').show();
+        }
+      });
+    }
+    /******************** 订阅相关 end **************************/
+  };
+
+  oLeftUser.init();
+
+});
+
+/*
+* 数据统计
+*/
+$(document).ready(function(){
+
+  var dataAjaxUrl  = '';
+  var oDataStatistics = {
+    init: function(){
+      this.bindEvent();
+      this.listenYpEvent();
+      this.fLeftStatusData();
+    }
+  , bindEvent: function(){
+      $('.live-side-content .search-area form').on('submit', function(){
+        _hmt.push(['_trackEvent', 'room', 'left_search']);
+      });
+    }
+    // 左侧栏  默认显示状态
+  , fLeftStatusData: function(){
+      /// todo
+      var isOpenLeft = !!$('body').hasClass('open-left');
+      if( isOpenLeft ){
+        _hmt.push(['_trackEvent', 'room', 'left_status_open']);
+      } else {
+        _hmt.push(['_trackEvent', 'room', 'left_status_close']);
+      }
+    }
+  , listenYpEvent: function(){
+      // 引导显示  统计
+      yp.sub('page/guide/show', function(e, data){
+        if( 'task' == data.type ){
+          /// todo
+          _hmt.push(['_trackEvent', 'room', 'room_guide']);
+        }
+      });
+
+      yp.sub('page/task/panel/show', function(){
+        if( oPageConfig.oLoginInfo ){
+          _hmt.push(['_trackEvent', 'room', 'romm_task_btn_user']);
+        } else {
+          _hmt.push(['_trackEvent', 'room', 'romm_task_btn_guest']);
+        }
+      });
+
+      yp.sub('page/task/do', function(e, data){
+        _hmt.push(['_trackEvent', 'room', 'romm_task_do', data.type]);
+      });
+      yp.sub('page/task/receive', function(e, data){
+        _hmt.push(['_trackEvent', 'room', 'romm_task_receive', data.type]);
+      });
+    }
+  };
+
+  oDataStatistics.init();
+
+});

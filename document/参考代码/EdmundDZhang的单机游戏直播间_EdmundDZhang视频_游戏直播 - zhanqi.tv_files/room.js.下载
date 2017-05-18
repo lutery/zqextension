@@ -1,0 +1,263 @@
+yp.use('timegift', function(yp){
+  yp.ready(function(){
+    var ui = {};
+
+    var oStarLight = {
+      init: function(){
+        this.view();
+        this.bindEvent();
+        this.listenYpEvent();
+        this.listenSocketEvent();
+        this.fLoadActiveInfo();
+      }
+    , view: function(){
+        ui.$body = $('body');
+
+        /// todo
+        ui.$active_btn = yp.module.fCallFun('oBaseUI', 'fRegistRoomFun', [ { sHtml: '<li>\
+                  <a href="javascript:;">\
+                    <img src="' + oPageConfig.oUrl.sUrlBase + 'i/year-last/renwu-1.png" alt="">\
+                  </a>\
+                </li>', key: 'starlight', weight: 18 } ]);
+
+        ui.$active_btn_2 = yp.module.fCallFun('oBaseUI', 'fRegistRoomFun', [ { sHtml: '<li>\
+                  <a href="javascript:;">\
+                    <div class="title-area-other js-cnt-tips" style="display:none;">0</div>\
+                    <img src="' + oPageConfig.oUrl.sUrlBase + 'i/year-last/renwu-2.png" alt="">\
+                    <p class="time-area js-time-cutdown-area" style="display:none;">倒计时<span class="js-time-cutdown">00:00</span></p>\
+                  </a>\
+                </li>', key: 'starlight2', weight: 19 } ]);
+
+        ui.$active_panel = $('<div style="display:none;">\
+          <div class="mask js-close"></div>\
+          <div class="double-activity-ibox">\
+            <a href="javascript:;" class="close js-close"></a>\
+            <div class="double-btn-area">\
+              <a href="/active/end_of_2016/starlight" target="_blank" class="view-rank-btn"></a>\
+              <a href="/active/end_of_2016" target="_blank" class="activity-main">活动主会场>></a>\
+            </div>\
+            <div class="top-area cleafix">\
+              <div class="top-left">\
+                <div class="title">本轮全平台已赠送男/女朋友总数：<span class="js-active-1-gift-cnt">0</span>个</div>\
+                <div class="sub-title">\
+                  （全平台第10个赠送男/女朋友的用户可享受半价优惠，平台则重新计数。了解详情\
+                  <a href="javascript:;" class="more-btn">\
+                    <div class="more-ibox">\
+                      <div class="more-top"></div>\
+                      <div class="more-mid">\
+                        <p>1. 所有用户在平台赠送“男女朋友”礼物都统一进行全平台计数，计数显示只会在1——10之前循环。当全平台赠送的“男女朋友”个数达到10之后，则进行新一轮的计数。</p>\
+                        <br>\
+                        <p>2.“男女朋友”礼物视为同一类别礼物，不单独计算“男朋友”或“女朋友”个数。</p>\
+                        <br>\
+                        <p>3. 每一轮赠送第10个“男女朋友”礼物的用户都可以享受半价优惠，赠送后系统自动返还一半金币。一次性赠送多个“男女朋友”礼物，依然可正常享受折扣</p>\
+                      </div>\
+                      <div class="more-bottom"></div>\
+                    </div>\
+                  </a>）\
+                </div>\
+              </div>\
+              <div class="top-right">\
+                <a href="/active/endofyear/summary" target="_blank" class="go-lakes"></a>\
+              </div>\
+            </div>\
+            <div class="bottom-area cleafix">\
+              <div class="bottom-left">\
+                <div class="span-type">（<span class="js-active-2-anchor-stage">预选赛</span>）</div>\
+                <p class="main-title">主播星力值：<span class="num js-active-2-anchor-cnt">--</span></p>\
+                <p class="title"><span class="js-active-2-anchor-camp">星光榜</span>排名：<span class="num"><span class="js-active-2-anchor-rank">--</span><span class="js-active-2-anchor-reset" style="display:none;">（距离上1名还差<span class="js-active-2-anchor-need">0</span>星力值）</span></span></p>\
+                <div class="gift-info">\
+                  <p class="dv">赶快去礼物区给主播赠送星光礼物：</p>\
+                  <img src="' + oPageConfig.oUrl.sUrlBase + 'i/year-last/stars.gif" alt="" class="stars-icon dv">\
+                </div>\
+                <div class="nums-area clearfix">\
+                  <div class="nums-left">您已赠送的星光礼物个数：</div>\
+                  <div class="nums-right">\
+                    <a href="javascript:;" class="nums-login js-login-link">【登陆】后查看</a>\
+                    <p class="js-active-2-myself-cnt" style="display:none;">100个</p>\
+                  </div>\
+                </div>\
+              </div>\
+              <div class="bottom-right">\
+                <p class="main-title">主播人气值：<span class="num js-anchor-seasoning-bag-cnt" data-hostcnt="0">--</span></p>\
+                <p class="title">最强人气之星排名：<span class="num"><span class="js-anchor-seasoning-bag-rank">--</span><span class="js-anchor-seasoning-bag-reset" style="display:none;">（距离上1名还差<span class="js-anchor-seasoning-bag-need">0</span>人气值）</span></span></p>\
+              </div>\
+            </div>\
+          </div>\
+        </div>');
+        ui.$body.append(ui.$active_panel);
+
+        ui.$active_panel_2 = $('<div class="tlbao-hover-ibox" style="display:none;">\
+            <i class="arrow"></i>\
+            <div class="hd">调料包</div>\
+            <div class="bd">\
+              <p class="girts-info">登录后每观看20分钟直播可获得一个调料包，每天最多可获得10个。点击一次赠送主播一个调料包。</p>\
+            </div>\
+          </div>');
+        ui.$body.append(ui.$active_panel_2);
+
+        /// todo
+        ui.$active_btn_2.timegift({
+          type: 'seasoning'
+        , fAfterInfo: function(data){
+            // var self = this;
+
+            // ui.$active_panel.find('.js-anchor-seasoning-bag-cnt').html( 0 < data.hostcnt ? data.hostcnt : '--').data('hostcnt', data.hostcnt);
+            // ui.$active_panel.find('.js-anchor-seasoning-bag-rank').html('--');
+            // ui.$active_panel.find('.js-anchor-seasoning-bag-reset').hide();
+            // if( 0 < data.hostcnt ){
+            //   ui.$active_panel.find('.js-anchor-seasoning-bag-rank').html(+data.rank + 1);
+            //   if( 0 < +data.rank ){
+            //     ui.$active_panel.find('.js-anchor-seasoning-bag-reset').show().find('.js-anchor-seasoning-bag-need').html(data.need); /// todo
+            //   }
+            // }
+          }
+        , fAfterBro: function(data){
+            yp.pub('page/room/sysmsg', { content: '<span class="name">' + data.name + '&nbsp;</span>送给主播1个调料包<img alt="调料包" style="margin-left:5px;display:inline;vertical-align: bottom;" src="' + oPageConfig.oUrl.sUrlBase + 'i/year-last/tlb.png" />' });
+
+            // var hostcnt = ui.$active_panel.find('.js-anchor-seasoning-bag-cnt').data('hostcnt');
+            // hostcnt = +hostcnt + +data.ccnt;
+            // ui.$active_panel.find('.js-anchor-seasoning-bag-cnt').html(hostcnt).data('hostcnt', hostcnt);
+            // if( 0 < hostcnt ){
+            //   ui.$active_panel.find('.js-anchor-seasoning-bag-rank').html(+data.rank + 1);
+            //   if( 0 < +data.rank ){
+            //     ui.$active_panel.find('.js-anchor-seasoning-bag-reset').show().find('.js-anchor-seasoning-bag-need').html(data.need); /// todo
+            //   } else {
+            //     ui.$active_panel.find('.js-anchor-seasoning-bag-reset').hide();
+            //   }
+            // }
+          }
+        });
+      }
+    , bindEvent: function(){
+        var self = this;
+
+        // 显示活动面板
+        ui.$active_btn.on('click', function(e){
+          e.preventDefault();
+          ui.$active_panel.show();
+          self.fLoadActiveInfo();
+        });
+
+        // 关闭活动面板
+        ui.$active_panel.on('click', '.js-close', function(e){
+          e.preventDefault();
+          ui.$active_panel.hide();
+        });
+        // 活动面板，点击等级
+        ui.$active_panel.on('click', '.js-login-link', function(e){
+          e.preventDefault();
+          yp.pub('page/login');
+        });
+
+        ui.$active_btn_2.on('mouseenter', function(){
+          ui.$active_panel_2.show();
+
+          var oOffset = ui.$active_btn_2.offset()
+            , btnWidth = ui.$active_btn_2.width()
+            , tipsHeight = ui.$active_panel_2.outerHeight()
+            , tipsWidth = ui.$active_panel_2.outerWidth();
+
+          oOffset.top = oOffset.top - tipsHeight - 10;
+          oOffset.left = oOffset.left + ( btnWidth - tipsWidth ) / 2;
+          oOffset.bottom = 'auto';
+          oOffset.zIndex = 15;
+          ui.$active_panel_2.css(oOffset);
+        }).on('mouseleave', function(){
+          ui.$active_panel_2.hide();
+        });
+      }
+    , listenYpEvent: function(){
+        var self = this;
+
+        yp.sub('page/login/done', function(){
+          self.fLoadActiveInfo();
+        });
+        yp.sub('page/logout/done', function(){
+          self.fLoadActiveInfo();
+        });
+        yp.sub('page/regist/done', function(){
+          self.fLoadActiveInfo();
+        });
+      }
+    , listenSocketEvent: function(){
+        var self = this;
+
+        $.topic('msgc/Eleven.Notify').sub(function(data){
+          self.fRenderPanelActive1(data.total);
+          if( oPageConfig.oLoginInfo && data.uid == oPageConfig.oLoginInfo.uid && 0 < data.halfCnt ){
+            alert('恭喜您获得男/女朋友半价折扣，系统将自动返还一半金币到您的账户，请注意查收');
+            yp.pub('page/rich/update', { num: data.halfCnt * 3300, type: 'gold' });
+          }
+        });
+
+        $.topic('msgc/endYear').sub(function(data){
+          self.fRenderPanelActive2(data);
+        });
+      }
+      // 获取活动信息
+    , fLoadActiveInfo: function(){
+        var self = this;
+
+        ui.$active_panel.find('.js-active-2-myself-cnt').hide();
+        ui.$active_panel.find('.js-login-link').show();
+
+        yp.ajax('/api/actives/endyear/info.' + oPageConfig.oRoom.id, {
+          type: 'get'
+        , data: { _v: Math.floor( $.now() / 60000 ) }
+        , dataType: 'json'
+        }).done(function(data){
+          if( 0 == data.code ){
+            self.fRenderPanelActive1(data.data.nvpyNum);
+            oPageConfig.oLoginInfo && (data.data.sendUid = oPageConfig.oLoginInfo.uid);
+            self.fRenderPanelActive2(data.data);
+
+            ui.$active_panel.find('.js-anchor-seasoning-bag-cnt').html( 0 < data.data.hotValue ? data.data.hotValue : '--').data('hostcnt', data.data.hotValue);
+            ui.$active_panel.find('.js-anchor-seasoning-bag-rank').html('--');
+            ui.$active_panel.find('.js-anchor-seasoning-bag-reset').hide();
+            if( 0 < data.data.hotValue ){
+              ui.$active_panel.find('.js-anchor-seasoning-bag-rank').html(+data.data.hotRank);
+              if( 1 < +data.data.hotRank ){
+                ui.$active_panel.find('.js-anchor-seasoning-bag-reset').show().find('.js-anchor-seasoning-bag-need').html(data.data.hotDiff); /// todo
+              }
+            }
+          }
+        });
+      }
+    , fRenderPanelActive1: function(cnt){
+        var self = this;
+
+        var mod = cnt % 10;
+        ui.$active_panel.find('.js-active-1-gift-cnt').html( 0 < cnt ? mod : 0 );
+      }
+    , fRenderPanelActive2: function(data){
+        var self = this;
+
+        ui.$active_panel.find('.js-active-2-anchor-cnt').html( 0 < data.starValue ? data.starValue : '--');  // 主播星力值
+        if( 0 < data.starValue ){ // 排名
+          var rank = 999 < +data.starRank ? '999+' : data.starRank;
+          ui.$active_panel.find('.js-active-2-anchor-rank').html( rank );
+        } else {
+          ui.$active_panel.find('.js-active-2-anchor-rank').html( '--' );
+        }
+        if( 0 >= data.starValue || 1 == data.starRank ){  // 距上一名
+          ui.$active_panel.find('.js-active-2-anchor-reset').hide();
+        } else {
+          var need = 9999 < +data.starDiff ? '9999+' : data.starDiff;
+          ui.$active_panel.find('.js-active-2-anchor-reset').show().find('.js-active-2-anchor-need').html(need);
+        }
+        ui.$active_panel.find('.js-active-2-anchor-stage').html(data.jdname); // 赛程进度
+        ui.$active_panel.find('.js-active-2-anchor-camp').html(data.rankName); // 赛程进度
+
+        if( oPageConfig.oLoginInfo && oPageConfig.oLoginInfo.uid == data.sendUid ){
+          ui.$active_panel.find('.js-active-2-myself-cnt').show().html(data.starNum + '个');
+          ui.$active_panel.find('.js-login-link').hide();
+        }
+      }
+    };
+
+    yp.sub('page/base/ready', function(){
+      oStarLight.init();
+    });
+
+  });
+});

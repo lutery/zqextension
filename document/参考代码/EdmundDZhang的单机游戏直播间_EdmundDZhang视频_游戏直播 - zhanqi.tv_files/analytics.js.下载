@@ -1,0 +1,220 @@
+(function(){
+  var
+      params = {},
+      script_id = 'bf_script_analytics_id',
+      sTime = '',
+      startTime = +new Date(),
+      args = '',
+      serverHost = 'tj.zhanqi.tv',
+      //serverHost = 'tj.com',
+      sendUrl = (("https:" == document.location.protocol) ? " https://" : " http://") + serverHost +'/1.gif?';
+  var version =  getParam('_v');
+  var idsite =  getParam('_k');
+  args += 'idsite=' + idsite + '&version=' + version;
+
+  if(document) {
+    var guestId = getAnalyticsCookies('gid');
+    if(!guestId) {
+       params.guestId = 0;    
+    } else {
+        params.guestId = guestId
+    }
+    var userId = getAnalyticsCookies('tj_uid');
+    if(!userId) {
+       params.userId = 0;    
+    } else {
+        params.userId = userId
+    }    
+    var isReg = getAnalyticsCookies('isReg');
+    if(!isReg) {
+       params.isReg = 0;    
+    } else {
+       params.isReg = isReg
+    }    
+    if(self != top) {
+       // params.referer = '';
+        params.isIframe = 1;
+    } else {
+       // params.referer = document.referrer || '';
+        params.isIframe = 0;
+    }    
+    params.domain = document.domain || '';
+    params.url = document.URL || '';
+    params.referer = document.referrer || '';
+    //params.cookie = document.cookie || '';
+    params.title = '';
+  }
+
+  if(window && window.screen) {
+    params.sh = window.screen.height || 0;
+    params.sw = window.screen.width || 0;
+    params.cd = window.screen.colorDepth || 0;
+  }
+
+  if(navigator) {
+    params.userAgent = navigator.userAgent || '';
+    params.terminalType = isPC() ? 1 : 0;
+    params.os = detectOS();
+   // var browserInfo = getBrowserInfo();
+    params.browser = getBrowserInfo();
+    //params.browserVersion  = browserInfo.version;
+	
+    params.lang =  navigator.browserLanguage || navigator.language || '';
+    var flashInfo = supportFlash();
+    params.isFlash = flashInfo.hasFlash ? 1 : 0;
+    params.flashVersion = flashInfo.version;
+    params.isCookie = navigator.cookieEnabled ? 1 : 0;
+  }
+
+  for(var i in params) {
+    if(args !== '') {
+      args += '&';
+    }
+    args += i + '=' + encodeURIComponent(params[i]);
+  }
+
+  var img = new Image(1, 1);
+  img.src = sendUrl + args + '&visitTime=2&sTime=' + startTime + '&randomId=' + startTime;  //发送请求
+
+  function getParam(paramName) {
+    var reg = new RegExp("(^|\\?|&)"+ paramName+"=([^&]*)(\\s|&|$)", "i");
+    if (reg.test(document.getElementById(script_id).src)) {
+      return RegExp.$2;
+    } else {
+      return "";
+    }
+  }
+
+  function detectOS() {
+    var sUserAgent = navigator.userAgent,
+        sUserPlatform = navigator.platform,
+        isWin = (sUserPlatform == "Win32") || (sUserPlatform == "Windows"),
+        isMac = (sUserPlatform == "Mac68K") || (sUserPlatform == "MacPPC") || (sUserPlatform == "Macintosh") || (sUserPlatform == "MacIntel");
+    if(isMac) {return "Mac";}
+    var isUnix = (sUserPlatform == "X11") && !isWin && !isMac;
+    if(isUnix) {return "Unix";}
+    var isLinux = (String(sUserPlatform).indexOf("Linux") > -1);
+    var bIsAndroid = sUserAgent.toLowerCase().match(/android/i) == "android";
+    if(isLinux) {
+      if(bIsAndroid) {
+        return "Android";
+      }else {
+        return "Linux";
+      }
+    }
+    if(isWin) {
+      var isWin2K = sUserAgent.indexOf("Windows NT 5.0") > -1 || sUserAgent.indexOf("Windows 2000") > -1;
+      if(isWin2K) {return "Win2000";}
+      var isWinXP = sUserAgent.indexOf("Windows NT 5.1") > -1 || sUserAgent.indexOf("Windows XP") > -1;
+      if(isWinXP) {return "WinXP";}
+      var isWin2003 = sUserAgent.indexOf("Windows NT 5.2") > -1 || sUserAgent.indexOf("Windows 2003") > -1;
+      if(isWin2003) {return "Win2003";}
+      var isWinVista= sUserAgent.indexOf("Windows NT 6.0") > -1 || sUserAgent.indexOf("Windows Vista") > -1;
+      if(isWinVista) {return "WinVista";}
+      var isWin7 = sUserAgent.indexOf("Windows NT 6.1") > -1 || sUserAgent.indexOf("Windows 7") > -1;
+      if(isWin7) {return "Win7";}
+      var isWin8 = sUserAgent.indexOf("Windows NT 6.2") > -1 || sUserAgent.indexOf("Windows 8") > -1;
+      if(isWin8) {return "Win8";}
+    }
+    return sUserPlatform;
+  }
+
+  function getBrowserInfo() {
+    var
+      res = {
+        browser: 'other',
+        version: '0'
+      };
+	var u = navigator.userAgent.toLowerCase();
+	if( u.indexOf('firefox') > -1) {
+		return 'firefox';
+	}
+	if( u.indexOf('opera') > -1) {
+		return 'opera';
+	}
+	isIE = u.indexOf('trident') > -1 || u.indexOf('msie') > -1
+    if(isIE) {
+      return 'ie';
+    }
+	if( u.indexOf('chrome') > -1) {
+		return 'chrome';
+	}
+	if( u.indexOf('safari') > -1) {
+		return 'safari';
+	}
+    	
+    return 'other';
+  }
+
+  function isPC() {
+    var userAgentInfo = navigator.userAgent.toLowerCase();
+	if(userAgentInfo.match(/(iphone|ipad|ipod|android|symbianos|windows phone|ucweb|BlackBerry|midp|mobile)/i)){
+		return 0;
+	} else {
+		return 1;	
+	}
+  }
+
+  function supportFlash() {
+    var hasFlash = false;
+    var version = 0;
+
+    if(window.ActiveXObject) {
+      try{
+        var swf = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+        if(swf) {
+          hasFlash = true;
+          var VSwf = swf.GetVariable("$version");
+          version = VSwf.replace(/^.*\s+(\d+),(\d+).*$/,"$1.$2");
+        }
+      } catch(swf) {}
+    } else{
+      if(navigator.plugins) {
+        for(var i = 0, len = navigator.plugins.length; i < len; i++) {
+          if(navigator.plugins[i].name.toLowerCase().indexOf('shockwave flash') > -1) {
+            var des = navigator.plugins[i].description;
+            hasFlash = true;
+            version = des.split(' ')[2];
+          }
+        }
+      }
+    }
+    return {hasFlash: hasFlash, version: version};
+  }
+  
+    //cookie操作  
+    //set
+    function setAnalyticsCookies(c_name, value, expires, path, domain, secure) {
+        var d = new Date();
+        if (expires != null && expires >= 0) {
+    		d.setTime(d.getTime() + (expires * 1000));//expires  second
+    	} 
+        document.cookie = c_name + "=" + escape(value) + ((expires == null) ? "": ";expires=" + d.toUTCString()) + ((path == null) ? "": ("; path=" + path)) + ((domain == null) ? "": ("; domain=" + domain)) + ((secure == true) ? "; secure": "");
+    }    
+    //get
+    function getAnalyticsCookies(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end == -1) {
+                    c_end = document.cookie.length;
+                }
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return null;
+    }
+    //del
+    function delAnalyticsCookies(c_name) {
+        var expi = new Date();
+        expi.setTime(expi.getTime() - 1);
+        var cval = this.c_get(c_name);
+        if (cval != null) {
+            document.cookie = c_name + "=" + cval + ";expires=" + expi.toGMTString();
+            return true;
+        }
+        return false;
+    }	
+})();

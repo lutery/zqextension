@@ -1,0 +1,237 @@
+yp.ready(function(){
+
+  var oSword = {
+    _ui: {}
+  , init: function(){
+      this.view();
+      this.bindEvent();
+      this.listenYpEvent();
+      this.listenSocketEvent();
+    }
+  , view: function(){
+      var self = this
+        , sHtml = '<div class="smashing-eggs-area" id="js-sword-baoxiang-panel" style="display:none;">\
+                    <a href="javascript:;" class="eggs-btn js-sword-baoxiang-btn">\
+                      <div class="time-area textC js-sword-baoxiang-wait">\
+                        <p>倒计时</p>\
+                        <p class="js-time-show">00:00</p>\
+                      </div>\
+                      <div class="time-area textC js-sword-baoxiang-rob">\
+                        <p>点击金蛋</p>\
+                        <p>抢金币</p>\
+                      </div>\
+                      <div class="eggs-ibox clearfix">\
+                        <div class="left">\
+                          <div class="img-box">\
+                            <img class="js-sword-tips-avatar" src="" alt="">\
+                          </div>\
+                          <p class="name js-sword-tips-nickname"></p>\
+                        </div>\
+                        <div class="right">\
+                          <div class="js-sword-baoxiang-info">\
+                            <p>土豪金的蛋蛋哦，</p>\
+                            <p>猜猜里面有什么？</p>\
+                          </div>\
+                          <div class="js-sword-baoxiang-end" style="display:none;">\
+                            <p>金蛋被抢光了</p>\
+                          </div>\
+                        </div>\
+                      </div>\
+                    </a>\
+                  </div>'
+        , _ui = self._ui;
+
+      if( !$('#js-chat-control-panel').find('#js-small-control-layer').length ){
+        $('#js-chat-control-panel').append('<div class="live-new-fun" id="js-small-control-layer"></div>');
+      }
+
+      $('#js-small-control-layer').append(sHtml);
+
+      _ui.$sword_baoxiang_panel = $('#js-sword-baoxiang-panel');
+      _ui.$sword_baoxiang_btn = _ui.$sword_baoxiang_panel.find('.js-sword-baoxiang-btn');
+    }
+  , bindEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$sword_baoxiang_btn.on('click', function(e){
+        e.preventDefault();
+        self.fDoRob(_ui.$sword_baoxiang_btn);
+      });
+    }
+  , listenYpEvent: function(){}
+  , listenSocketEvent: function(){
+      var self = this;
+
+      $.topic('msgc/active_come_santa').sub(function(data){
+        if( 'sword' != data.source ){
+          return false;
+        }
+        self.swordTimeout && clearTimeout(self.swordTimeout);
+        self.bGeetShow = false;
+        if( self.oGeetest ){
+          self.oGeetest.fRemoveGeet();
+          self.oGeetest = null;
+        }
+        switch(+data.type){
+          case 0:
+            self.fSwordRodEnd();
+            yp.pub('page/fire/time/end', { uid: 'sword_baoxiang' });
+            break;
+          case -1:
+            self.fSwordRobStop();
+            break;
+          case 1:
+            self.fSwordRobStart();
+            yp.pub('page/fire/time/start', { uid: 'sword_baoxiang' });
+            yp.pub('page/fire/time/end', { uid: 'sword_baoxiang_wait' });
+            break;
+          case 2:
+            self.fShowSwordTimedown(data);
+            yp.pub('page/fire/time/start', { uid: 'sword_baoxiang_wait' });
+            break;
+        }
+      });
+
+      $.topic('msgc/sword_msg').sub(function(data){
+        yp.pub('page/room/sysmsg', { content: '【' + data.nickname + '】从金蛋中敲出了' + data.gold + '个金币，饮水不忘挖井人，对【' + data.boxNickname + '】深深鞠了一躬' });
+      });
+    }
+  , swordTimeout: 0
+  , oGeetest: null
+  , fSwordRodEnd: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$sword_baoxiang_panel.hide();
+    }
+  , bSwordCanRob: false
+  , fSwordRobStop: function(){
+      var self = this
+        , _ui = self._ui;
+
+      self.bSwordCanRob = false;
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-end').show();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-rob').hide();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-info').hide();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-wait').hide();
+    }
+  , fSwordRobStart: function(){
+      var self = this
+        , _ui = self._ui;
+
+      self.bSwordCanRob = true;
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-rob').show();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-info').show();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-wait').hide();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-end').hide();
+    }
+  , fShowSwordTimedown: function(oInfo){
+      var self = this
+        , _ui = self._ui;
+
+      self.bSwordCanRob = false;
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-wait').show();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-info').show();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-rob').hide();
+      _ui.$sword_baoxiang_btn.find('.js-sword-baoxiang-end').hide();
+
+      _ui.$sword_baoxiang_btn.find('.js-sword-tips-nickname').html(oInfo.nickname).attr('title', oInfo.nickname);
+      _ui.$sword_baoxiang_btn.find('.js-sword-tips-avatar').attr('src', oInfo.avatar + '-medium');
+      _ui.$sword_baoxiang_panel.show();
+      self.fDoSwordTimecutdown( oInfo.lefttm );
+    }
+  , fDoSwordTimecutdown: function(time){
+      var self = this
+        , _ui = self._ui;
+
+      var m = Math.floor( time / 60 )
+        , s = time % 60;
+      if( 10 > m ){
+        m = '0' + m;
+      }
+      if( 10 > s ){
+        s = '0' + s;
+      }
+
+      _ui.$sword_baoxiang_btn.find('.js-time-show').html(m + ':' + s);
+      if( 0 < time ){
+        self.swordTimeout = setTimeout(function() {
+          time--;
+          self.fDoSwordTimecutdown(time);
+        }, 1000);
+      }
+    }
+  , fShowAnimate: function(){
+      var self = this
+        , _ui = self._ui;
+
+      $img = $('<img src="' + oPageConfig.oUrl.sUrlBase + 'i/eggs-open.gif" style="width: 128px; height: 256px; position: absolute; right: 0; bottom: 0;" />');
+      _ui.$sword_baoxiang_panel.after($img);
+      setTimeout(function(){
+        $img.remove();
+      }, 3000);
+    }
+  , fDoRob: function($btn){
+      var self = this
+        , _ui = self._ui;
+
+      if( !oPageConfig.oLoginInfo ){
+        yp.pub('page/login');
+        return false;
+      }
+
+      if( $btn.data('ajaxing') || !self.bSwordCanRob || self.bGeetShow ){
+        return false;
+      }
+
+      if( !oPageConfig.oLoginInfo.bindMobile ){
+        yp.errorNotify('请先绑定手机');
+        return false;
+      }
+
+      self.bGeetShow = true;
+      yp.use('geetest', function(yp, oGeetest){
+        oGeetest.init();
+        self.oGeetest = oGeetest;
+        yp.pub('page/geetest/show', {
+          self: self
+        , fun: function(oGeetestData){
+            $btn.data('ajaxing', true);
+            yp.ajax('/api/actives/sword/getgold.' + oPageConfig.oRoom.id, {
+              type: 'post'
+            , data: oGeetestData
+            , dataType: 'json'
+            }).always(function(){
+              $btn.data('ajaxing', false);
+            }).done(function(data){
+              if( 0 == data.code ){
+                switch(data.data.type){
+                  case 'gold':
+                    alert('恭喜你获得' + data.data.amount + '个金币');
+                    yp.pub('page/rich/update', { num: data.data.amount, type: 'gold' });
+                    break;
+                }
+
+                // self.fShowAnimate();
+              } else {
+                yp.ajaxNotice(data);
+              }
+              var codeArr = [1, 100, 1011];
+              if( -1 == $.inArray( data.code, codeArr ) ){
+                self.fSwordRodEnd();
+              }
+            });
+          }
+        , remove: function(){
+            self.oGeetest = null;
+            self.bGeetShow = false;
+          }
+        });
+      });
+    }
+  };
+
+  oSword.init();
+
+});

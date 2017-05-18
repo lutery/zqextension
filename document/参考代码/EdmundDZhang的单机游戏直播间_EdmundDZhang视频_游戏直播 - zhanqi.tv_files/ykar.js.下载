@@ -1,0 +1,9 @@
+;(function (global) {
+    global.Yk = function () {
+        return {
+            appid:"207_207"
+        };
+    }
+})(this);
+!function(a){var b=a.Yk(),c=b.appid;a.ykarClick=function(a,b){var e,f,d="";for(e in b)""!=d&&(d+="&"),d+=e+"="+encodeURIComponent(b[e]);f="http://ykdc.hzyoka.com/bfrd/webstat?appid="+c+"&eventid="+a+"&"+d,new Image(1,1).src=f}}(this);
+

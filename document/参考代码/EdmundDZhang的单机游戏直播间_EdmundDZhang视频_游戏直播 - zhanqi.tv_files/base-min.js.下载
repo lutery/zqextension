@@ -1,0 +1,1559 @@
++
+function () {
+    var a = {
+        _ui: {},
+        oRich: null,
+        ypChat: null,
+        keyCode: {
+            enter: 13
+        },
+        options: {
+            t_msgItem: '<li href="#yp-menu-user" class="js-chat-list-li ${myself}" style="${style}">${content}</li>'
+        },
+        bRoomPage: !0,
+        init: function (a, o, t) {
+            var e = this;
+            this.oRich = a,
+            this.bRoomPage = void 0 == t ? !0 : t,
+            this.view(),
+            this.bindEvent(),
+            this.listenYpEvent(),
+            this.listenSocketEvent(),
+            this.fLoadRoomTags(),
+            this.fRenderFollowStatus(),
+            this.fShowRoomNotice(),
+            this.fCheckBindInfo(),
+            this.fFansAboutInit(),
+            this.fLoadAnchorModule(),
+            e.fShowQNRecommend(),
+            e.fCheckShowVideo(),
+            e.fRenderRich(a.myRich),
+            yp.module.fRegistModule("oBaseUI", e),
+            setTimeout(function () {
+                e.fShowOnline()
+            }, 2e3),
+            o = o || ["guess", "translate", "recommend", "guide", "bonus", "ticket", "package"],
+            yp.each(o, function (a) {
+                e.oModulLoadFun[a] && e[e.oModulLoadFun[a]] && e[e.oModulLoadFun[a]]()
+            }),
+            $.when(flashReadyDtd).done(function () {
+                e.fChatWidgetInit()
+            }),
+            yp.pub("page/base/ready")
+        },
+        view: function () {
+            var a = this,
+                o = a._ui;
+            o.$body = $("body"),
+            o.$win = $(window),
+            o.$room_super_panel = $("#js-room-super-panel"),
+            o.$room_online_panel = $("#js-room-online-panel"),
+            o.$room_anchor_info_area = $("#js-room-anchor-info-area"),
+            o.$anchor_fight_level = o.$room_anchor_info_area.find(".js-anchor-fight-level"),
+            o.$anchor_tags_list = $("#js-anchor-tag-list"),
+            o.$anchor_tags_layer = $("#js-anchor-tag-layer"),
+            o.$room_share_btn = o.$room_anchor_info_area.find(".js-room-share-btn"),
+            o.$room_app_btn = o.$room_anchor_info_area.find(".js-room-app-btn"),
+            o.$room_follow_area = o.$room_anchor_info_area.find(".js-room-follow-area"),
+            o.$room_share_panel = $("#js-room-share-panel"),
+            o.$room_app_panel = $("#js-room-app-panel"),
+            o.$js_right_chat_panel = $("#js-right-chat-panel"),
+            o.$js_chat_msg_input = o.$js_right_chat_panel.find(".js-chat-msg-input"),
+            o.$js_chat_msg_btn = o.$js_right_chat_panel.find(".js-chat-msg-btn"),
+            o.$js_right_chat_layer = o.$js_right_chat_panel.find(".js-right-chat-layer"),
+            o.$js_chat_msg_list = o.$js_right_chat_panel.find(".js-chat-msg-list"),
+            o.$js_chat_msg_scroll = o.$js_right_chat_panel.find(".js-chat-msg-scroll"),
+            o.$js_chat_limit = o.$js_right_chat_panel.find(".js-chat-limit"),
+            o.$js_chat_new_msg_notice = o.$js_right_chat_panel.find(".js-list-new-msg"),
+            o.$js_chat_conect_msg = o.$js_right_chat_panel.find(".yp-list-chat-connect"),
+            o.$js_chat_control = o.$js_right_chat_panel.find(".js-chat-control"),
+            o.$room_notice_area = o.$js_right_chat_panel.find(".js-room-notice-area"),
+            o.$room_module_area = $("#js-room-module-area"),
+            o.$room_anchor_desc = o.$room_module_area.find(".js-room-anchor-desc-panel"),
+            o.$room_qn_recommend = o.$room_module_area.find(".js-room-qn-recommend-panel"),
+            o.$room_new_video = o.$room_module_area.find(".js-room-new-video-panel"),
+            o.$room_new_video_line = o.$room_module_area.find("#js-room-new-video-line"),
+            o.recommend_room_item_html = '<li class="js-live-list-li">              <a href="${url}" class="js-jump-link" onclick="qnTongji(\'${source_roomid}\', \'${id}\', \'${index}\', \'${isforce}\')" target="_blank">                <div class="img-box">                  <img src="${bpic}" alt="${title}">                  <i class="sub-mask"></i>                  <i class="play-icon"></i>                </div>                <p class="room-name">${title}</p>                <div class="meat">                  <i class="dv ${gender}"></i>                  <span class="anchor dv">${nickname}</span>                </div>              </a>            </li>',
+            o.room_new_video_html = '<li>              <a href="${url}" class="js-jump-link" target="_blank">                <div class="img-box">                  <img src="${bpic}" alt="${title}">                  <div class="game-name">                    <p class="name">${gameName}</p>                  </div>                  <i class="sub-mask"></i>                  <i class="play-icon"></i>                </div>                <p class="room-name">${title}</p>                <div class="meat clearfix">                  <div class="views">                    <i class="eyes-icon dv"></i>                    <span class="dv">${playCnt}</span>                  </div>                  <i class="dv ${gender}"></i>                  <span class="anchor dv">${nickname}</span>                </div>              </a>            </li>',
+            o.$js_right_chat_hide_btn = $("#js-right-chat-hide-btn"),
+            o.$js_right_chat_show_btn = $("#js-right-chat-show-btn"),
+            o.$user_rich_area = $("#js-user-rich-area"),
+            o.$user_rich_gold_lock = o.$user_rich_area.find(".js-rich-gold-lock"),
+            o.$js_chat_msg_scroll.slimscroll({
+                    height: "auto",
+                    size: "8",
+                    color: o.$js_chat_msg_scroll.data("color"),
+                    railBorderRadius: "0px",
+                    borderRadius: "0px",
+                    allowPageScroll: !1
+                }),
+            a.ypChat = o.$js_chat_msg_list.chat({
+                    t_msgItem: a.options.t_msgItem,
+                    fSendMsg: function (a, o) {
+                        yp.pub("page/" + a, o)
+                    },
+                    $scrollObj: o.$js_chat_msg_scroll
+                }).data("yp.chat"),
+            o.$anchor_fight_level.titleTips(),
+            o.$user_rich_gold_lock.titleTips();
+            var t = o.$room_share_panel.find("[data-clipboard-target]");
+            t.jcopy({
+                    callback: function () {
+                        t.hasClass("zeroclipboard-is-hover") && yp.ajax("/api/actives/chance/send.share")
+                    }
+                }),
+            a.fLoadSmallAds(),
+            a.fLoadPullAds()
+        },
+        bindEvent: function () {
+            var a = this,
+                o = a._ui;
+            $(".js-share-hover").on("mouseenter", function () {
+                    $(this).addClass("share-hover")
+                }).on("mouseleave", function () {
+                    $(this).removeClass("share-hover")
+                }),
+            o.$room_share_btn.on("click", function (o) {
+                    o.preventDefault(),
+                    a.fShowSharePanel()
+                }),
+            o.$room_app_btn.on("click", function (o) {
+                    o.preventDefault(),
+                    a.fShowAppPanel()
+                }),
+            o.$room_follow_area.on("mouseenter", function () {
+                    !o.$room_follow_area.hasClass("js-addfollow") && o.$room_follow_area.find(".js-room-follow-txt").text("取消订阅")
+                }).on("mouseleave", function () {
+                    !o.$room_follow_area.hasClass("js-addfollow") && o.$room_follow_area.find(".js-room-follow-txt").text("已订阅")
+                }).on("click", function (o) {
+                    o.preventDefault(),
+                    a.fFollowActive()
+                }),
+            o.$js_chat_msg_input.on("keydown", function (t) {
+                    t.which === a.keyCode.enter && (t.preventDefault(), a.fSubmitMsg(o.$js_chat_msg_input.val()))
+                }).on("blur", function (a) {
+                    yp.pub("page/chat/tips/hide")
+                }),
+            o.$js_chat_msg_btn.on("click", function (t) {
+                    t.preventDefault(),
+                    a.fSubmitMsg(o.$js_chat_msg_input.val())
+                }),
+            o.$win.on("scroll", function () {
+                    a.fCheckShowVideo()
+                }),
+            o.$js_chat_msg_list.on("click", ".js-show-chat-menu", function (o) {
+                    return a.fShowChatMenu(o, $(this)),
+                    !1
+                }),
+            o.$js_right_chat_layer.on("mouseenter", function () {
+                    o.$js_right_chat_layer.find(".js-hover-btn").show()
+                }).on("mouseleave", function () {
+                    o.$js_right_chat_layer.find(".js-hover-btn").hide()
+                }).on("click", ".js-hover-btn", function (o) {
+                    o.preventDefault();
+                    var t = $(this),
+                        e = t.data("action");
+                    switch (e) {
+                        case "clear":
+                            a.ypChat.fClear();
+                            break;
+                        case "scroll":
+                            var n = yp.module.fCallFun("oMainData", "fSetAutoScroll", []);
+                            t.html(n ? "取消滚屏" : "开始滚屏")
+                        }
+                }),
+            o.$js_right_chat_layer.on("click", ".mobile-app-icon", function (a) {
+                    return window.open(oPageConfig.oUrl.sUrlHost + "common/apps.html"),
+                    !1
+                }),
+            o.$js_chat_msg_scroll.on("scrollTop.yp.chat", function (a, o) {
+                    $(this).slimScroll({
+                        scrollTo: o.scrollTo
+                    })
+                }),
+            o.$js_right_chat_panel.find(".js-socket-relogin").on("click", function (a) {
+                    a.preventDefault();
+                    var o = yp.module.fPropertyVal("oMainData", "oChatStatus");
+                    o.bNoChatByServer && (o.bNewLogin = !1, yp.pub("page/socketrelogin", {
+                        refleshChat: !1
+                    }))
+                }),
+            o.$js_right_chat_hide_btn.on("click", function (o) {
+                    o.preventDefault(),
+                    a.fChatListCloseAction(!0);
+                    var t = new Date;
+                    t.setTime(t.getTime() + 2592e3),
+                    $.cookie("closeDialog", 1, {
+                        expires: t,
+                        path: "/"
+                    })
+                }),
+            o.$js_right_chat_show_btn.on("click", function (o) {
+                    o.preventDefault(),
+                    a.fChatListCloseAction(!1);
+                    var t = new Date;
+                    t.setTime(t.getTime() + 2592e3),
+                    $.cookie("closeDialog", 0, {
+                        expires: t,
+                        path: "/"
+                    })
+                }),
+            o.$js_chat_new_msg_notice.on("click", function (t) {
+                    t.preventDefault(),
+                    a.fNewMsgNotice(!1),
+                    o.$js_chat_msg_scroll.trigger("scrollTop.yp.chat", {
+                        scrollTo: o.$js_chat_msg_scroll[0].scrollHeight
+                    })
+                }),
+            o.$js_chat_msg_scroll.on("slimscrolling", function (o, t) {
+                    t + $(this).height() >= this.scrollHeight && a.fNewMsgNotice(!1)
+                }),
+            o.$js_chat_msg_list.on("mouseenter", ".js-medal-hover", function (a) {
+                    var t = $(this),
+                        e = t.data("desc");
+                    if (!o.$js_xunzhang_desc_panel) {
+                            var n = '<div class="authenticate-ibox" id="js-xunzhang-desc-panel" style="display:none;height:auto;width:180px;word-wrap:break-word;"><i class="arrow"></i><p class="js-desc-layer"></p></div>';
+                            o.$js_xunzhang_desc_panel = $(n),
+                            o.$body.append(o.$js_xunzhang_desc_panel)
+                        }
+                    o.$js_xunzhang_desc_panel.show().find(".js-desc-layer").html(e);
+                    var i = t.offset();
+                    i.width = "auto",
+                    i.textAlign = "center",
+                    o.$js_xunzhang_desc_panel.css(i),
+                    i.top = i.top - o.$js_xunzhang_desc_panel.outerHeight() - 5,
+                    i.left = i.left - (o.$js_xunzhang_desc_panel.outerWidth() - t.width()) / 2,
+                    i.right = "auto",
+                    o.$js_xunzhang_desc_panel.css(i)
+                }).on("mouseleave", ".js-medal-hover", function () {
+                    o.$js_xunzhang_desc_panel && o.$js_xunzhang_desc_panel.hide()
+                }),
+            o.$js_right_chat_panel.on("click", ".js-login-link", function (o) {
+                    o.preventDefault(),
+                    a.fTouristLogin()
+                }),
+            o.$js_right_chat_panel.on("click", ".js-change-view-level", function (o) {
+                    o.preventDefault(),
+                    a.ajax_socket("kamsgack")
+                })
+        },
+        listenYpEvent: function () {
+            var a = this,
+                o = a._ui;
+            yp.sub("page/anchor/level/update", function (o, t) {
+                    a.fAnchorFightUpdate(t)
+                }),
+            yp.sub("page/login/done", function () {
+                    a.fCheckBindInfo(),
+                    a.fFansBeSign(),
+                    a.fShowQNRecommend(),
+                    a.fReloginRoom(),
+                    a.fLoadAnchorModule()
+                }),
+            yp.sub("page/logout/done", function () {
+                    a.fCheckBindInfo(),
+                    a.fFansBeSign(),
+                    a.fShowQNRecommend(),
+                    a.fReloginRoom(),
+                    a.fSetEmotRight(""),
+                    $.removeCookie("danmu_setting_cookie"),
+                    $.removeCookie("danmu_setting_xuanzi_cookie")
+                }),
+            yp.sub("page/regist/done", function () {
+                    a.fCheckBindInfo(),
+                    a.fShowQNRecommend(),
+                    a.fReloginRoom()
+                }),
+            yp.sub("page/follow/done", function (o, t) {
+                    if (t.uid == oPageConfig.oRoom.uid) {
+                        var e = t.flag,
+                            n = t.follow;
+                        oPageConfig.oViewer && (oPageConfig.oViewer.isFollow = e ? !0 : !1, a.fRenderFollowStatus(), yp.successNotify(t.flag ? "您已订阅该主播" : "您已取消订阅该主播")),
+                        yp.pub("page/follows/change", {
+                                follows: n
+                            })
+                    }
+                }),
+            yp.sub("page/follows/change", function (a, t) {
+                    oPageConfig.oRoom.follows = t.follows,
+                    o.$room_follow_area.find(".js-room-follow-num").html(t.follows)
+                }),
+            yp.sub("page/oViewer/change", function (o) {
+                    a.fRenderFollowStatus()
+                }),
+            yp.sub("page/nochat", function (o, t) {
+                    var e = yp.module.fPropertyVal("oMainData", "oUser");
+                    return 10 > e.permission && 2 > e.guard && 0 < t.type ? !1 : t.uid && t.name && t.ip ? void a.ajax_socket("blockuser", t) : !1
+                }),
+            yp.sub("page/kick", function (o, t) {
+                    a.ajax_socket("kickreq", t)
+                }),
+            yp.sub("page/setAdmin", function (o, t) {
+                    a.ajax_socket("setadminreqbyuid", t)
+                }),
+            yp.sub("page/report", function (o, t) {
+                    a.ajax_socket("reportuser", t)
+                }),
+            yp.sub("page/chat/tips", function (o, t) {
+                    a.fChatTipsShow(t)
+                }),
+            yp.sub("page/room/login/done", function () {
+                    var o = yp.module.fPropertyVal("oMainData", "oUser");
+                    a.fDanmuColorSet(!0),
+                    a.fSetEmotRight(40 <= o.permission ? -1 : o.emot),
+                    a.fLoadAdminModule(o)
+                }),
+            yp.sub("page/rich/change", function (o, t) {
+                    a.fRenderRich(t)
+                }),
+            yp.sub("page/room/share", function (o) {
+                    a.fShowSharePanel()
+                }),
+            yp.sub("page/room/change", function (o, t) {
+                    oPageConfig.oRoom = t.oRoom,
+                    a.ajax_socket("connvideo", oPageConfig.oRoom.flashvars),
+                    yp.pub("page/follows/change", {
+                        follows: oPageConfig.oRoom.follows
+                    }),
+                    a.fReloginRoom(oPageConfig.oRoom.online),
+                    a.fSetOnline(),
+                    a.fFansWeekRank(),
+                    a.fFansBeSign(),
+                    a.fSetAnchorLevel(),
+                    a.fLoadHotWordList(),
+                    yp.module.fCallFun("oGift", "fAnchorChange", [])
+                })
+        },
+        listenSocketEvent: function () {
+            var a = this;
+            a._ui;
+            $.topic("msgc/togglesize").sub(function (o) {
+                a.fFlashToggleSize(o.esc)
+            }),
+            $.topic("msgc/login_req").sub(function (o) {
+                a.fTouristLogin({
+                    dataStatistics: ["_trackEvent", "login_source", "login_source_flash"]
+                })
+            }),
+            $.topic("msgc/regist_req").sub(function (o) {
+                a.fTouristRegist({
+                    dataStatistics: ["_trackEvent", "login_source", "login_source_flash"]
+                })
+            })
+        },
+        ajax_socket: function (a, o) {
+            var t = yp.module.fPropertyVal("oMainData", "oChatStatus");
+            return t && t.bNewLogin ? !1 : (o = o || {}, yp.ajax(a, {
+                type: "socket",
+                data: o
+            }))
+        },
+        fSetOnline: function (a) {
+            var o = this,
+                t = o._ui;
+            oPageConfig.oRoom.online = a,
+            t.$room_online_panel.find(".js-room-online-txt").show().find("span").html(a),
+            t.$room_online_panel.find(".js-room-online-loading").hide(),
+            o.fShowOnline()
+        },
+        fShowOnline: function () {
+            var a = this,
+                o = a._ui;
+            !o.$room_online_panel.is(":visible") && o.$room_online_panel.show()
+        },
+        fAnchorFightUpdate: function (a) {
+            var o = this,
+                t = o._ui,
+                e = a.level,
+                n = t.$anchor_fight_level.data("level"); + t.$anchor_fight_level.data("fight") < +a.fight && (t.$anchor_fight_level.data("fight", a.fight), t.$anchor_fight_level.attr("title", "当前" + a.level + "级，还差" + (a.nextLevelFight ? a.nextLevelFight - a.fight : 0) + "战斗力升级")),
+            e > n && t.$anchor_fight_level.removeClass("anchor-grade-" + n).addClass("anchor-grade-" + e).data("level", e)
+        },
+        fSetAnchorLevel: function () {
+            var a = this,
+                o = a._ui,
+                t = oPageConfig.oRoom.anchorAttr.hots.level,
+                e = o.$anchor_fight_level.data("level");
+            o.$anchor_fight_level.data("fight", oPageConfig.oRoom.anchorAttr.hots.fight),
+            o.$anchor_fight_level.attr("title", "当前" + oPageConfig.oRoom.anchorAttr.hots.level + "级，还差" + (oPageConfig.oRoom.anchorAttr.hots.nextLevelFight ? oPageConfig.oRoom.anchorAttr.hots.nextLevelFight - oPageConfig.oRoom.anchorAttr.hots.fight : 0) + "战斗力升级"),
+            o.$anchor_fight_level.removeClass("anchor-grade-" + e).addClass("anchor-grade-" + t).data("level", t)
+        },
+        fLoadRoomTags: function () {
+            var a = this,
+                o = a._ui;
+            o.$anchor_tags_list.length && a.bRoomPage && yp.ajax(yp.format("/api/static/anchor.tags/${uid}.json", {
+                    uid: oPageConfig.oRoom.uid
+                }), {
+                    type: "get",
+                    data: {
+                        _v: Math.floor($.now() / 6e4)
+                    },
+                    dataType: "json"
+                }).done(function (a) {
+                    if (0 == a.code) {
+                        var t = "";
+                        a.data && yp.each(a.data, function (a, o) {
+                            4 >= o && (t += '<li class="label-' + (o + 1) + ' js-anchor-tag-item" data-id="' + a.id + '"><a href="/tag/' + a.name + '" target="_blank">' + a.name + "</a></li>")
+                        }),
+                        t && (o.$anchor_tags_layer.removeClass("hidden"), o.$anchor_tags_list.html(t))
+                    }
+                })
+        },
+        fShowSharePanel: function () {
+            var a = this,
+                o = a._ui,
+                t = o.$room_share_btn.offset();
+            o.$room_share_panel.is(":visible") || (o.$room_share_panel.show(), t.top = t.top + o.$room_share_btn.outerHeight(!0) + 5, t.left = t.left + (o.$room_share_btn.outerWidth(!0) - o.$room_share_panel.outerWidth(!0)) / 2, o.$room_share_panel.css(t), setTimeout(function () {
+                    o.$body.off("click.share").on("click.share", function (a) {
+                        o.$room_share_panel.hide(),
+                        o.$body.off("click.share")
+                    })
+                }, 0))
+        },
+        fShowAppPanel: function () {
+            var a = this,
+                o = a._ui,
+                t = o.$room_app_btn.offset();
+            o.$room_app_panel.is(":visible") || (o.$room_app_panel.show(), t.top = t.top + o.$room_app_btn.outerHeight(!0) + 5, t.left = t.left + (o.$room_app_btn.outerWidth(!0) - o.$room_app_panel.outerWidth(!0)) / 2, o.$room_app_panel.css(t), setTimeout(function () {
+                    o.$body.off("click.app").on("click.app", function (a) {
+                        o.$room_app_panel.hide(),
+                        o.$body.off("click.app")
+                    })
+                }, 0))
+        },
+        fRenderFollowStatus: function () {
+            var a = this,
+                o = a._ui,
+                t = oPageConfig.oViewer ? oPageConfig.oViewer.isFollow : !1;
+            o.$room_follow_area.toggleClass("js-addfollow", !t).toggleClass("dyue-done", t).find(".js-room-follow-txt").text(t ? "已订阅" : "订阅")
+        },
+        fFollowActive: function () {
+            var a = this,
+                o = a._ui;
+            return oPageConfig.oLoginInfo ? oPageConfig.oLoginInfo.uid == oPageConfig.oRoom.uid ? (yp.errorNotify("主播不能订阅自己"), !1) : void(o.$room_follow_area.hasClass("js-addfollow") ? yp.pub("page/follow", {
+                    flag: !0,
+                    uid: oPageConfig.oRoom.uid
+                }) : confirm("确认取消订阅当前主播吗？", function () {
+                    yp.pub("page/follow", {
+                        flag: !1,
+                        uid: oPageConfig.oRoom.uid
+                    })
+                }, "", {
+                    width: 388
+                })) : (yp.pub("page/login"), !1)
+        },
+        fFlashToggleSize: function (a) {
+            var o = this,
+                t = o._ui,
+                e = a || t.$body.hasClass("maxScrean");
+            t.$body.toggleClass("maxScrean", !e)
+        },
+        fSubmitMsg: function (a) {
+            var o = this,
+                t = o._ui,
+                e = $.trim(a);
+            return e ? "-dmc" == e.toLocaleLowerCase() ? (yp.pub("page/showdmc"), t.$js_chat_msg_input.val(""), !1) : 0 == $.trim(e).indexOf("/") ? (yp.pub("page/terminal/msg", {
+                    content: e
+                }), t.$js_chat_msg_input.val(""), !1) : oPageConfig.oLoginInfo ? void yp.module.fCallFun("oMainData", "fChatSubmit", [e]) : (o.fTouristLogin(), !1) : !1
+        },
+        fDealChatLen: function () {
+            var a = this,
+                o = a._ui,
+                t = o.$js_chat_msg_list.find(".js-chat-list-li").length;
+            t > 400 && o.$js_chat_msg_list.find(".js-chat-list-li").slice(0, t - 200).remove()
+        },
+        fTouristLogin: function (a) {
+            a ? yp.pub("page/login", a) : yp.pub("page/login")
+        },
+        fTouristRegist: function (a) {
+            a ? yp.pub("page/regist", a) : yp.pub("page/regist")
+        },
+        fShowChatCutdown: function (a) {
+            var o = this,
+                t = o._ui;
+            0 >= a ? t.$js_chat_msg_btn.html("发送").removeClass("again-btn") : (t.$js_chat_msg_btn.html(a).addClass("again-btn"), setTimeout(function () {
+                    a--,
+                    o.fShowChatCutdown(a)
+                }, 1e3))
+        },
+        fChatMsgInputFun: function (a) {
+            var o = this,
+                t = o._ui;
+            switch (a) {
+                case "empty":
+                    t.$js_chat_msg_input.val("");
+                    break;
+                case "focus":
+                    t.$js_chat_msg_input.focus()
+                }
+        },
+        fSetChatMaxLength: function () {
+            var a = this,
+                o = a._ui,
+                t = yp.module.fPropertyVal("oMainData", "oChat");
+            o.$js_chat_msg_input.prop("maxlength", t.nMsgSize)
+        },
+        fYpchatClear: function () {
+            var a = this;
+            a.ypChat.fClear()
+        },
+        fYpchatOnmsg: function (a, o) {
+            var t = this;
+            t.ypChat.fOnMsg(a, o)
+        },
+        fYpchatSendMsg: function (a, o) {
+            var t = this;
+            t.ypChat.fSendMsg(a, o)
+        },
+        fNewMsgNotice: function (a) {
+            var o = this,
+                t = o._ui;
+            t.$js_chat_new_msg_notice.stop(),
+            a ? t.$js_chat_new_msg_notice.fadeIn() : t.$js_chat_new_msg_notice.fadeOut()
+        },
+        fShowRoomNotice: function () {
+            function a() {
+                e && clearTimeout(e);
+                var a = t.$room_notice_area.outerHeight(!0);
+                t.$room_notice_area.animate({
+                    top: 0 - a,
+                    opacity: 0
+                }, 500, "easeInOutQuart", function () {
+                    t.$room_notice_area.remove()
+                })
+            }
+            var o = this,
+                t = o._ui;
+            if (!t.$room_notice_area.length || !o.bRoomPage) return !1;
+            var e;
+            t.$room_notice_area.animate({
+                    top: 0,
+                    opacity: 1
+                }, 500, "easeInOutQuart", function () {
+                    "hide" == t.$room_notice_area.data("hide") && (e = setTimeout(function () {
+                        a()
+                    }, 1e3 * t.$room_notice_area.data("delay")))
+                }),
+            t.$room_notice_area.on("click", ".js-close", function (o) {
+                    o.preventDefault(),
+                    a()
+                })
+        },
+        fAnchorDescImgAuto: function () {
+            var a = this,
+                o = a._ui;
+            if (!a.bRoomPage) return !1;
+            var t = o.$room_anchor_desc.find(".js-anchor-desc-content"),
+                e = t.width();
+            return o.$style_div || (o.$style_div = $('<div style="display:none;"></div>'), o.$body.append(o.$style_div)),
+            t.is(":visible") ? void o.$style_div.html('<style type="text/css">.live-room-page .anchor-details .bd img{ max-width: ' + e + "px !important; height: auto !important; }</style>") : !1
+        },
+        fShowQNRecommend: function () {
+            var a = this,
+                o = a._ui;
+            return o.$room_qn_recommend.is(":visible") && o.$room_qn_recommend.fadeOut(),
+            oPageConfig.oLoginInfo && a.bRoomPage ? void a.fLoadQNRecommend() : !1
+        },
+        fLoadQNRecommend: function () {
+            var a = this,
+                o = a._ui;
+            if (!oPageConfig.oLoginInfo || !a.bRoomPage) return !1;
+            o.$room_qn_recommend.find(".js-recommen-room-list").hide();
+            var t = {
+                    uid: oPageConfig.oLoginInfo.uid,
+                    gid: 0,
+                    positionTag: "rooms.qiniang",
+                    excludeRoomId: oPageConfig.oRoom.id,
+                    nums: 5
+                };
+            yp.ajax(yp.format("/api/static/v2.1/rec/rooms/${nums}/${uid}/${positionTag}/${excludeRoomId}.json", t), {
+                    type: "get",
+                    data: {
+                        _v: Math.floor($.now() / 6e4)
+                    },
+                    dataType: "json"
+                }).done(function (a) {
+                    if (0 == a.code) {
+                        var e = "",
+                            n = 0;
+                        yp.each(a.data, function (a) {
+                                n++,
+                                a.gender = 2 == a.gender ? "sex-man" : "sex-woman",
+                                1e6 < a.online ? a.online = (+a.online / 1e4).toFixed(0) + "万" : 1e4 < a.online && (a.online = (+a.online / 1e4).toFixed(1) + "万"),
+                                a.source_roomid = "2_" + oPageConfig.oRoom.id,
+                                a.index = n,
+                                -1 == a.url.indexOf("?") ? a.url = a.url + "?param_s=" + a.source_roomid + "." + a.index + "." + a.isforce : a.url = a.url + "&param_s=" + a.source_roomid + "." + a.index + "." + a.isforce,
+                                e += yp.format(o.recommend_room_item_html, a)
+                            }),
+                        t.nums == n ? (o.$room_qn_recommend.fadeIn().find(".js-recommen-room-list").show().html(e).videoHover({
+                                hover: ".js-jump-link"
+                            }), yp.ajax("/api/public/recommend.show", {
+                                type: "post",
+                                data: {
+                                    uid: oPageConfig.oLoginInfo ? oPageConfig.oLoginInfo.uid : 0,
+                                    gid: 0,
+                                    source_roomid: oPageConfig.oRoom.id,
+                                    source_type: "lives.qiniang"
+                                },
+                                dataType: "json"
+                            })) : o.$room_qn_recommend.fadeOut()
+                    }
+                })
+        },
+        fCheckShowVideo: function () {
+            var a = this,
+                o = a._ui;
+            if (!a.bRoomPage) return !1;
+            var t = o.$win.scrollTop(),
+                e = o.$win.height(),
+                n = o.$room_new_video_line.offset();
+            n.top <= t + e + 5 && !a.bVideoInit && a.fShowNewVideo()
+        },
+        bVideoInit: !1,
+        fShowNewVideo: function () {
+            var a = this;
+            a._ui;
+            return a.bVideoInit ? !1 : (a.fNewVideoPaginationInit(), void(a.bVideoInit = !0))
+        },
+        fNewVideoPaginationInit: function () {
+            var a = this,
+                o = a._ui;
+            o.$room_new_video.find(".js-room-new-video-list").zqPagination({
+                    $pagination: o.$room_new_video.find(".page"),
+                    tmplHtml: o.room_new_video_html,
+                    dataKey: "videos",
+                    fDataGet: function (a, t) {
+                        o.$room_new_video.find(".js-room-new-video-loading").hide(),
+                        0 == a.code && 5 < a.data.videos.length && 10 > a.data.videos.length && 1 == t && a.data.videos.splice(5)
+                    },
+                    fDataFormat: function (a) {
+                        return a.gender = 2 == a.gender ? "sex-man" : "sex-woman",
+                        1e6 < a.playCnt ? a.playCnt = (+a.playCnt / 1e4).toFixed(0) + "万" : 1e4 < a.playCnt && (a.playCnt = (+a.playCnt / 1e4).toFixed(1) + "万"),
+                        a.showDate = fDateFormat("yyyy-MM-dd", 1e3 * a.addTime),
+                        a
+                    },
+                    fAfterRander: function () {
+                        !o.$room_new_video.is(":visible") && o.$room_new_video.fadeIn()
+                    }
+                }).videoHover({
+                    hover: ".js-jump-link"
+                })
+        },
+        fReloginRoom: function () {
+            yp.ajax("/api/public/room.viewer", {
+                type: "get",
+                data: {
+                    uid: oPageConfig.oRoom.uid,
+                    _t: Math.floor($.now() / 6e4)
+                },
+                dataType: "json"
+            }).done(function (a) {
+                0 == a.code ? (oPageConfig.oViewer = a.data, yp.module.fCallFun("oMainData", "fReloginRoom", [{
+                    oViewer: oPageConfig.oViewer
+                }]), yp.pub("page/oViewer/change")) : a.message && yp.errorNotify(a.message)
+            }),
+            yp.pub("page/watchrecord/add", {
+                id: oPageConfig.oRoom.flashvars.RoomId,
+                type: 1
+            })
+        },
+        fShowChatMenu: function (a, o) {
+            var t = this,
+                e = t._ui;
+            e.$chat_menu || (t.fRenderChatMenu(), t.fChatMenuEvent());
+            var n = o.data("id"),
+                i = o.data("chatid");
+            e.$chat_menu.data("gid", n).data("chatid", i);
+            var s = yp.module.fCallFun("oMainData", "fGetChaterByGid", [n]),
+                l = yp.module.fPropertyVal("oMainData", "oUser");
+            if (!s) return !1;
+            var r = l.permission,
+                d = s.permission,
+                c = $(a.target),
+                f = c.offset().top + c.height();
+            e.$chat_menu.css({
+                    left: a.pageX - 10,
+                    top: f,
+                    right: "auto"
+                }).show();
+            var u, m = 0;
+            e.$chat_menu.find("[data-permission]").each(function () {
+                    u = $(this);
+                    var a, o = u.attr("data-permission"),
+                        t = u.attr("data-permission-req"),
+                        e = r,
+                        n = u.find("a"),
+                        i = n.attr("data-type");
+                    if (40 > e && "nochat" == i && 2 <= l.guard && (e = 10), a = e >= t && o >= d) if ("nochat" == i) {
+                            var c = n.attr("data-mode"),
+                                f = n.attr("data-action");
+                            a = 0 != c ? e > d && 30 > d : !( !! ~$.inArray(s.uid, l.blocklist) == !! +f)
+                        } else "setAdmin" === i ? a = !(d != o) : ("kick" == i || "showip" == i) && (a = e > d && 30 > d);
+                    30 > e && (10 < s.slevel || 2 <= s.guard) && (a = !1),
+                    u.toggle(a),
+                    !a && m++
+                }),
+            m == e.$chat_menu.find("[data-permission]").length ? (e.$body.off("click.menu"), e.$chat_menu.hide()) : setTimeout(function () {
+                    e.$body.off("click.menu").on("click.menu", function () {
+                        e.$body.off("click.menu"),
+                        e.$chat_menu.hide()
+                    })
+                }, 0)
+        },
+        fRenderChatMenu: function () {
+            var a, o = this,
+                t = o._ui;
+            a = '<div class="dropdownBox" id="yp-menu-user" style="position:absolute; display: none;" data-chatid="0" data-gid="0">                <ul role="menu" class="dropdown-ul js-chat-menu-list">                  <li data-permission-req="0" data-permission="1"><a href="javascript:;" data-type="nochat" data-mode="0" data-action="1">不看此人发言</a></li>                  <li data-permission-req="0" data-permission="1"><a href="javascript:;" data-type="nochat" data-mode="0" data-action="0">恢复此人发言</a></li>                  <li data-permission-req="0" data-permission="1"><a href="javascript:;" data-type="report">举报此用户</a></li>                  <li data-permission-req="20" data-permission="1"><a href="javascript:;" data-type="setAdmin" data-action="1" data-type-permission="10">设置房管</a></li>                  <li data-permission-req="20" data-permission="10"><a href="javascript:;" data-type="setAdmin" data-action="0" data-type-permission="1">取消房管</a></li>                  <li data-permission-req="10" data-permission="20"><a href="javascript:;" data-type="nochat" data-mode="1" data-action="1">今日禁言</a></li>                  <li data-permission-req="20" data-permission="20"><a href="javascript:;" data-type="nochat" data-mode="2" data-action="1">永久禁言</a></li>                  <li data-permission-req="20" data-permission="20"><a href="javascript:;" data-type="nochat" data-mode="3" data-action="1">IP禁言</a></li>                  <li data-permission-req="40" data-permission="20"><a href="javascript:;" data-type="nochat" data-mode="4" data-action="1">IP平台禁言</a></li>                  <li data-permission-req="40" data-permission="40"><a href="javascript:;" data-type="showip" data-mode="3">查看IP</a></li>                  <li data-permission-req="10" data-permission="10"><a href="javascript:;" data-type="sendnotice">发送通知</a></li>                </ul>              </div>',
+            t.$chat_menu = $(a),
+            t.$body.append(t.$chat_menu)
+        },
+        fChatMenuEvent: function () {
+            var a = this,
+                o = a._ui;
+            o.$chat_menu.on("click", "a", function (o) {
+                    o.preventDefault(),
+                    a.fChatMenuClick($(this))
+                })
+        },
+        oExtraMenu: {},
+        fRegistExtarMenu: function (a, o, t, e) {
+            var n = this,
+                i = n._ui;
+            n.oExtraMenu[o] = {
+                    title: a,
+                    module: t,
+                    fun: e
+                },
+            i.$chat_menu.find(".js-chat-menu-list").append('<li data-permission-req="0" data-permission="1"><a href="javascript:;" data-type="extra" data-key="' + o + '">' + a + "</a></li>")
+        },
+        fChatMenuClick: function (a) {
+            var o = this,
+                t = o._ui,
+                e = t.$chat_menu.data("gid"),
+                n = t.$chat_menu.data("chatid");
+            if (!e || !n) return !1;
+            var i = a.attr("data-type"),
+                s = yp.module.fCallFun("oMainData", "fGetChaterByGid", [e]),
+                l = yp.module.fCallFun("oMainData", "fGetChatTextById", [n]);
+            switch (s || alert("查无此人"), i) {
+                case "nochat":
+                    var r = a.attr("data-mode"),
+                        d = a.attr("data-action");
+                    if (isNaN(s.uid)) return +r > 0 && (yp.notify("禁言成功", 0), $.topic("msgc/blockusernotify").pub({
+                            blockname: s.nickname,
+                            action: a.attr("data-action")
+                        })),
+                    !1;
+                    yp.pub("page/nochat", {
+                            uid: +s.uid,
+                            name: s.nickname,
+                            type: +r,
+                            action: +d,
+                            msg: l,
+                            ip: s.ip
+                        });
+                    break;
+                case "report":
+                    if (!l) return yp.errorNotify("暂时不支持举报非文字类内容"),
+                    !1;
+                    var c = {
+                            msg: l,
+                            name: s.nickname,
+                            uid: s.uid,
+                            ip: s.ip
+                        };
+                    o.fReportChater(c);
+                    break;
+                case "kick":
+                    var f = "确定做此操作么？";
+                    3 == a.attr("data-mode") && (f = "确定封该用户的IP么？"),
+                    confirm(f, function () {
+                            return isNaN(s.uid) ? !1 : void yp.pub("page/kick", {
+                                targetid: [+s.uid],
+                                type: a.attr("data-mode"),
+                                msg: l
+                            })
+                        });
+                    break;
+                case "setAdmin":
+                    if (isNaN(s.uid)) return !1;
+                    var u = a.attr("data-type-permission"),
+                        d = a.attr("data-action");
+                    s && s.uid && !isNaN(s.uid) && !isNaN(s.uid) && yp.pub("page/setAdmin", {
+                            uid: +s.uid,
+                            type: u,
+                            action: d
+                        });
+                    break;
+                case "showip":
+                    var m = "";
+                    if (s.ip && (m += '用户IP: <a href="https://www.baidu.com/s?wd=' + s.ip + '" target="_blank">' + s.ip + "</a>"), s.swip) {
+                            var p = [255 & s.swip, s.swip >> 8 & 255, s.swip >> 16 & 255, s.swip >> 24 & 255];
+                            p.reverse(),
+                            m += '<br />服务器IP: <a href="https://www.baidu.com/s?wd=' + p.join(".") + '" target="_blank">' + p.join(".") + "</a>"
+                        }
+                    alert(m, function () {
+                            this.close()
+                        }, {
+                            title: "查看IP - " + s.nickname
+                        });
+                    break;
+                case "sendnotice":
+                    o.fSendNotice(e);
+                    break;
+                case "extra":
+                    var h = $this.data("key"),
+                        g = o.oExtraMenu[h];
+                    yp.module.fCallFun(g.module, g.fun, [s, l])
+                }
+        },
+        lastReportTime: 0,
+        fReportChater: function (a) {
+            function o() {
+                var o = "";
+                yp.each(n.dom.find(".report-type"), function (a) {
+                    return a.checked ? (o = a.value, !1) : void 0
+                }),
+                a.type = o,
+                a.sid = $.cookie("PHPSESSID");
+                var e = $.now();
+                5e3 > e - t.lastReportTime ? yp.errorNotify("对不起，您举报过于频繁") : (isNaN(a.uid) || yp.pub("page/report", a), t.lastReportTime = e, n.close())
+            }
+            if (!oPageConfig.oLoginInfo) return yp.pub("page/login"),
+            !1;
+            var t = this,
+                e = '<div class="ibox-msg report-box">                    <div class="info">                      <div class="mobInfoIbox">                        <form action="">                          <div class="form-group">                            <label class="label">举报内容：</label>                            <p class="report-message">' + a.msg + '</p>                          </div>                          <div class="form-group">                            <label class="label">举报对象：</label>                            <p class="report-message">' + a.name + '</p>                          </div>                          <div class="form-group">                            <label class="label">举报类型：</label>                            <ul class="report-message clearfix">                              <li>                                <label><input name="report-type" type="radio" checked="checked" value="1" class="report-type">色情</label>                              </li>                              <li>                                <label><input name="report-type" type="radio" value="2" class="report-type">诈骗</label>                              </li>                              <li>                                <label><input name="report-type" type="radio" value="3" class="report-type">广告</label>                              </li>                              <li>                                <label><input name="report-type" type="radio" value="4" class="report-type">反动</label>                              </li>                              <li>                                <label><input name="report-type" type="radio" value="5" class="report-type">其他</label>                              </li>                            </ul>                          </div>                          <div class="form-group last">                            举报说明（可选）：                            <p><input type="text" style="width:100%;" id="other"></p>                          </div>                        </form>                      </div>                    </div>                  </div>',
+                n = ibox({
+                    title: "举报",
+                    content: e,
+                    btns: [{
+                        name: "确定",
+                        callback: function () {
+                            o()
+                        }
+                    },
+                    {
+                        name: "关闭",
+                        callback: function () {
+                            var a = this;
+                            a.close()
+                        }
+                    }]
+                });
+            n.dom.css({
+                    width: 500,
+                    maxWidth: 500,
+                    marginLeft: -250,
+                    left: "50%"
+                }),
+            window.fIconFix && window.fIconFix(n.dom[0])
+        },
+        fSendNotice: function (a) {
+            function o() {
+                var a = e.dom.find("form"),
+                    o = a.find('[name="notice_content"]').val(),
+                    n = a.find('[name="gid"]').val();
+                return 0 >= o.content || 140 < o.content ? (yp.errorNotify("请输入140字以内的通知内容"), !1) : (isNaN(n) || t.ajax_socket("chatmessage", {
+                        content: o,
+                        toid: +n,
+                        usexuanzi: 0,
+                        style: null,
+                        speakinroom: 0
+                    }), void e.close())
+            }
+            var t = this,
+                e = ibox.form("发送通知", '<form><p style="text-align: left;padding: 0 0 10px 10px;">通知内容：(140字以内)</p><p><textarea rows="5" cols="30" name="notice_content" style="resize: none;"></textarea><input type="hidden" value="' + a + '" name="gid" /></p></form>', "", "", {
+                    btns: [{
+                        name: "取消",
+                        callback: function () {
+                            this.close()
+                        }
+                    },
+                    {
+                        name: "发送",
+                        callback: o
+                    }]
+                });
+            window.fIconFix && window.fIconFix(e.dom[0])
+        },
+        fCheckBindInfo: function () {
+            var a = this,
+                o = a._ui;
+            a.fBindStatus() ? (o.$js_chat_limit.hide(), o.$js_chat_msg_btn.removeClass("again-btn")) : (!oPageConfig.oLoginInfo || oPageConfig.oLoginInfo.account ? o.$js_chat_limit.find("a").replaceWith('<a href="/user/safe_bind" target="_blank">验证手机</a>') : o.$js_chat_limit.find("a").replaceWith('<a href="/user/third_complete" target="_blank">完善账号</a>'), o.$js_chat_limit.show(), o.$js_chat_msg_btn.addClass("again-btn"))
+        },
+        fBindStatus: function () {
+            return !(!oPageConfig.oLoginInfo || !oPageConfig.oLoginInfo.bindMobile)
+        },
+        fShowConnectNotice: function (a, o, t) {
+            var e = this,
+                n = e._ui;
+            a ? (n.$js_chat_conect_msg.show().find(".js-list-chat-connect-txt").html(o), t ? n.$js_chat_conect_msg.find(".js-socket-relogin-link").show() : n.$js_chat_conect_msg.find(".js-socket-relogin-link").hide()) : n.$js_chat_conect_msg.hide()
+        },
+        bChatListHidden: !1,
+        fChatListCloseAction: function (a) {
+            var o = this,
+                t = o._ui;
+            t.$room_super_panel.toggleClass("close-right", a),
+            o.bChatListHidden = a,
+            t.$js_right_chat_show_btn.toggleClass("hidden", !a),
+            a ? yp.pub("page/chatlist/close") : yp.pub("page/chatlist/open")
+        },
+        fChatListClose: function () {
+            var a = this,
+                o = a._ui,
+                t = !1;
+            if (-1 == ~$.cookie("closeDialog")) {
+                    var e = 1200 > $(window).width(),
+                        n = o.$room_super_panel.hasClass("close-right");
+                        (n && !e || !n && e) && (t = !0, a.fChatListCloseAction(e))
+                }
+            return t
+        },
+        fChatTipsShow: function (a) {
+            var o = this,
+                t = o._ui;
+            t.$chat_tips || (t.$chat_tips = $('<div class="redEnvelope-command" style="display:none;">                            <i class="arrow"></i>                            <div class="content js-chat-tips-content"></div>                          </div>'), t.$js_chat_control.append(t.$chat_tips), yp.sub("page/chat/myself", function () {
+                    yp.pub("page/chat/tips/hide")
+                }), yp.sub("page/chat/tips/hide", function () {
+                    t.$chat_tips.hide()
+                })),
+            t.$chat_tips.show().find(".js-chat-tips-content").html(a.msg)
+        },
+        fLoadTianshu: function () {
+            var a = yp.module.fPropertyVal("oMainData", "oUser");
+            return a && 40 > a.permission ? !1 : void yp.use("tianshuNew", function (o, t) {
+                t.init(a)
+            })
+        },
+        fChatWidgetInit: function () {
+            var a = this,
+                o = a._ui;
+            o.$js_hot_word_btn = o.$js_right_chat_panel.find(".js-hot-word-btn"),
+            o.$js_hot_word_layer = o.$js_right_chat_panel.find(".js-hot-word-layer"),
+            o.$js_hot_word_panel = o.$js_right_chat_panel.find("#js-hot-word-panel"),
+            o.$js_danmu_setting_panel = o.$js_right_chat_panel.find("#js-danmu-setting-panel"),
+            o.$js_danmu_setting_btn = o.$js_right_chat_panel.find(".js-danmu-setting-btn"),
+            a.fLoadHotWordList(),
+            a.fDanmuSettingDefaultSet(),
+            a.fDanmuSettingEvent(),
+            a.fEmotInit(),
+            yp.pub("page/chat/extradata/regist", {
+                    key: "danmu",
+                    caller: a,
+                    fun: function (t) {
+                        var e = o.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="size"]').data("size"),
+                            n = o.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="color"]').data("color"),
+                            i = o.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="mode"]').data("mode"),
+                            s = +o.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="mode"]').data("gold"),
+                            l = $.Deferred(),
+                            r = e,
+                            d = n,
+                            c = s > -1 ? i : "0",
+                            f = new Date;
+                        if (f.setTime(f.getTime() + 31536e6), $.cookie("danmu_setting_cookie", r + "_" + d + "_" + c, {
+                                expires: f,
+                                path: "/"
+                            }), t.msgs = e, t.msgc = 8 == i ? 0 : n, t.msgm = i, -1 == s) l.resolve({
+                                oChatMsg: t
+                            });
+                        else {
+                                var u;
+                                oPageConfig.oPropTypeIndex[4] && oPageConfig.oPropTypeIndex[4].length && (u = oPageConfig.oPropTypeIndex[4][0]),
+                                u && 0 <= +u.count ? (t.xc = 1, bUseProp = !0, u.count--, yp.pub("page/prop/used", {
+                                    propId: u.id,
+                                    cnt: u.count
+                                }), l.resolve({
+                                    oChatMsg: t
+                                })) : (t.xc = 0, bUseProp = !1, $.cookie("danmu_setting_xuanzi_cookie") ? s > a.oRich.fReturnRich("gold") ? (yp.errorNotify("金币不足，请充值"), l.reject({
+                                    key: "danmu"
+                                })) : (a.oRich.fRichUpdate(0 - s, "gold"), l.resolve({
+                                    oChatMsg: t
+                                })) : confirm("炫彩弹幕道具数量不足，确认使用" + s + '金币？<br /><label style="text-align:left;padding:15px 72px 0;"><input type="checkbox" class="js-xuanzi-noremind dv">&nbsp;不再提醒</label>', function () {
+                                    var o = this.dom.find(".js-xuanzi-noremind").prop("checked");
+                                    if (1 == o) {
+                                        var e = new Date;
+                                        e.setTime(e.getTime() + 31536e6),
+                                        $.cookie("danmu_setting_xuanzi_cookie", o, {
+                                            expires: e,
+                                            path: "/"
+                                        })
+                                    }
+                                    s > a.oRich.fReturnRich("gold") ? (yp.errorNotify("金币不足，请充值"), l.reject({
+                                        key: "danmu"
+                                    })) : (a.oRich.fRichUpdate(0 - s, "gold"), l.resolve({
+                                        oChatMsg: t
+                                    }))
+                                }, function () {
+                                    l.reject({
+                                        key: "danmu",
+                                        reason: "cancel"
+                                    })
+                                }))
+                            }
+                        return $.when(l)
+                    }
+                })
+        },
+        aHotWordList: [],
+        fLoadHotWordList: function () {
+            var a = this,
+                o = a._ui;
+            yp.ajax(yp.format("/api/static/live.hotwords/${gameId}/${roomId}", {
+                    gameId: oPageConfig.oRoom.gameId,
+                    roomId: oPageConfig.oRoom.id
+                }), {
+                    type: "get",
+                    data: {
+                        _v: Math.floor($.now() / 6e4)
+                    },
+                    dataType: "json"
+                }).done(function (t) {
+                    if (0 == t.code) {
+                        var e = "";
+                        a.aHotWordList = t.data,
+                        a.aHotWordList.length ? (yp.each(t.data, function (a, o) {
+                            e += '<li>                          <a href="javascript:;" class="js-hot-word-item" data-index="' + o + '"><p>' + a.wordTag + "</p></a>                        </li>"
+                        }), o.$js_hot_word_panel.find(".js-hot-word-list").html(e), o.$js_hot_word_layer.show(), $.when(flashReadyDtd).done(function () {
+                            a.ajax_socket("hotword", {
+                                data: a.aHotWordList
+                            })
+                        }), a.fHotWordEvent()) : (o.$js_hot_word_panel.find(".js-hot-word-list").html(""), o.$js_hot_word_layer.hide())
+                    }
+                })
+        },
+        fHotWordEvent: function () {
+            var a = this,
+                o = a._ui;
+            o.$js_hot_word_panel.find(".js-hot-word-item").on("click", function (t) {
+                    t.preventDefault();
+                    var e = $(this).data("index"),
+                        n = a.aHotWordList[e].hotWord;
+                    o.$js_hot_word_panel.trigger("hidden.yp.modal"),
+                    yp.module.fCallFun("oMainData", "fChatSubmit", [n, !0])
+                })
+        },
+        fGetDanmuGold: function () {
+            var a = this,
+                o = a._ui;
+            return +o.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="mode"]').data("gold")
+        },
+        fDanmuColorSet: function (a) {
+            var o = this,
+                t = o._ui,
+                e = t.$js_danmu_setting_panel.find('.js-danmu-setting-item.active[data-type="color"]').data("color"),
+                n = yp.module.fPropertyVal("oMainData", "oUser");
+            return 16 <= n.slevel && 5 == e || n.inweeklist && 4 == e || 10 <= n.permission && 6 == e ? !1 : (a ? e = 100 <= n.msgcnt ? 3 : 50 <= n.msgcnt ? 2 : 20 <= n.msgcnt ? 1 : 0 : 100 == n.msgcnt ? e = 3 : 50 == n.msgcnt ? e = 2 : 20 == n.msgcnt && (e = 1), t.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-type="color"]').removeClass("active"), void t.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-color="' + e + '"]').addClass("active"))
+        },
+        oDanmuSetting: {
+            size: 0,
+            color: 0,
+            mode: 0
+        },
+        fDanmuSettingDefaultSet: function () {
+            var a = this,
+                o = a._ui,
+                t = $.cookie("danmu_setting_cookie");
+            t && (t = t.split("_"), a.oDanmuSetting.size = t[0], a.oDanmuSetting.color = t[1], a.oDanmuSetting.mode = t[2]),
+            o.$js_danmu_setting_panel.find(".js-danmu-setting-item").removeClass("active"),
+            o.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-size="' + a.oDanmuSetting.size + '"]').addClass("active"),
+            o.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-color="' + a.oDanmuSetting.color + '"]').addClass("active"),
+            o.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-mode="' + a.oDanmuSetting.mode + '"]').addClass("active"),
+            o.$js_chat_control.find(".js-chat-form").removeClass("text-qn"),
+            8 == a.oDanmuSetting.mode && (a.fDanmuSetNotice('<p>主播战斗力+200  粉丝战斗力+200</p><p class="color">炫彩弹幕(2k金币) 土豪的表白方式</p>', "mode"), o.$js_chat_control.find(".js-chat-form").addClass("text-qn"))
+        },
+        aColorNotice: ["", "发送20条白色弹幕可用蓝色", "发送50条白/蓝弹幕可用橙色", "发送100条白/蓝/橙弹幕可用绿色", "当前房间，周榜前十可用粉色", "达到白金5等级才可用紫色", "仅房管可用红色"],
+        fDanmuSettingEvent: function () {
+            var a = this,
+                o = a._ui;
+            o.$js_danmu_setting_btn.on("click", function (o) {
+                    a.fDanmuSetNotice("", "color")
+                }),
+            o.$js_danmu_setting_panel.on("click", ".js-danmu-setting-item", function (t) {
+                    t.preventDefault();
+                    var e = $(this),
+                        n = e.data("type");
+                    if (!e.hasClass("active")) if ("color" != n) o.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-type="' + n + '"]').removeClass("active"),
+                    e.addClass("active"),
+                    "mode" == n && (o.$js_chat_control.find(".js-chat-form").toggleClass("text-qn", 8 == e.data("mode")), a.fDanmuSetNotice("", "mode"), 8 == e.data("mode") && a.fDanmuSetNotice('<p>主播战斗力+200  粉丝战斗力+200</p><p class="color">炫彩弹幕(2k金币) 土豪的表白方式</p>', "mode"));
+                    else {
+                            var i = e.data("color"),
+                                s = 0,
+                                l = yp.module.fPropertyVal("oMainData", "oUser");
+                            100 <= l.msgcnt ? s = 3 : 50 <= l.msgcnt ? s = 2 : 20 <= l.msgcnt && (s = 1),
+                            4 != i || l.inweeklist ? 5 == i && 16 > l.slevel ? a.fDanmuSetNotice(a.aColorNotice[i], "color") : 6 == i && 10 > l.permission ? a.fDanmuSetNotice(a.aColorNotice[i], "color") : 4 > i && i > 0 && i > s ? a.fDanmuSetNotice(a.aColorNotice[i], "color") : (o.$js_danmu_setting_panel.find('.js-danmu-setting-item[data-type="' + n + '"]').removeClass("active"), e.addClass("active"), a.fDanmuSetNotice("", "color")) : a.fDanmuSetNotice(a.aColorNotice[i], "color")
+                        }
+                }).on("click", ".js-close", function (a) {
+                    a.preventDefault(),
+                    o.$js_danmu_setting_panel.trigger("hidden.yp.modal")
+                })
+        },
+        danmuTimeout: 0,
+        fDanmuSetNotice: function (a, o) {
+            var t = this,
+                e = t._ui;
+            e.$js_danmu_setting_panel.find('.js-danmu-setting-notice[data-type="' + o + '"]').toggle( !! a).find(".js-notice-content").html(a),
+            a && "color" == o && (t.danmuTimeout && clearTimeout(t.danmuTimeout), t.danmuTimeout = setTimeout(function () {
+                    e.$js_danmu_setting_panel.find('.js-danmu-setting-notice[data-type="' + o + '"]').hide()
+                }, 2e3))
+        },
+        oEmot: {},
+        oEmotHash: {},
+        emotRe: /\[([\s\S]+?)\]/g,
+        oEmotRight: {
+            sys: -1
+        },
+        fEmotInit: function () {
+            var a = this;
+            yp.ajax("/api/static/v2.1/expression/lists", {
+                type: "get",
+                data: {
+                    _v: Math.floor($.now() / 6e4)
+                },
+                dataType: "json"
+            }).done(function (o) {
+                0 == o.code && (a.oEmot = o.data, a.fAppendEmot(), a.fEmotHashBuild(), a.fRanderEmot(), a.fEmotEvent(), a.ajax_socket("emotconfig", {
+                    emot: a.fEmotToString()
+                }), yp.pub("page/chat/extradata/regist", {
+                    key: "emot",
+                    caller: a,
+                    fun: function (o) {
+                        var t = $.Deferred();
+                        return o.useemot = a.fEmotContentToNum(o.content),
+                        t.resolve({
+                            oChatMsg: o
+                        }),
+                        $.when(t)
+                    }
+                }))
+            })
+        },
+        fAppendEmot: function () {
+            var a = this,
+                o = a._ui;
+            o.$emot_btn = o.$js_right_chat_panel.find(".js-emot-btn"),
+            o.$emot_list_panel = o.$js_right_chat_panel.find("#yp-panel-face"),
+            o.$emot_layer = o.$js_right_chat_panel.find(".js-emot-layer");
+            var t = '<div class="expression-hd">                <ul class="clearfix">                  <li class="tab active">                    <a href="javascript:;">                      <i class="line"></i>旗娘表情                    </a>                  </li>                  <li class="tab">                    <a href="javascript:;">                      <i class="line"></i>默认表情                    </a>                  </li>                </ul>              </div>',
+                e = "";
+            t += '<div class="expression-bd">',
+            yp.each(a.oEmot, function (a, o) {
+                    e = "sys" == o ? "default" : "",
+                    t += '<div class="tabc ' + e + '">',
+                    "sys" != o && (t += '<a href="https://www.zhanqi.tv/news/2015/11/18/630.html" target="_blank" class="unlock-qnExpression js-emot-banner" data-type="' + o + '"></a>'),
+                    t += '<div class="js-scroll"><ul class="clearfix">',
+                    yp.each(a, function (a) {
+                        t += "sys" == o ? '<li data-face="' + a.key + '" title="' + a.key + '" class="js_li js-emot-item">                        <a href="javascript:;"><img src="' + a.src + '"></a>                      </li>' : '<li data-face="' + a.key + '" title="' + a.key + '" class="js_li js-emot-item">                        <a href="javascript:;" class="expression-a js-emot-div no-Unlock">                          <img src="' + a.src + '" alt="">                          <i class="lock"></i>                        </a>                      </li>'
+                    }),
+                    t += "</ul></div></div>"
+                }),
+            t += "</div>",
+            o.$emot_list_panel.html(t).addClass("tabs").tabs(),
+            o.$emot_layer.show(),
+            o.$emot_list_panel.find(".js-scroll").slimscroll({
+                    height: 194,
+                    size: "8",
+                    color: "#e2e1e6",
+                    railBorderRadius: "0px",
+                    borderRadius: "0px",
+                    allowPageScroll: !1
+                })
+        },
+        fEmotEvent: function () {
+            var a = this,
+                o = a._ui;
+            o.$emot_list_panel.on("click", ".js-emot-item", function (t) {
+                    if (!$(this).find(".js-emot-div").hasClass("no-Unlock")) {
+                        t.preventDefault(),
+                        a.fChatMsgInputFun("focus");
+                        var e = o.$js_chat_msg_input.val();
+                        o.$js_chat_msg_input.val(e + $(this).attr("data-face")),
+                        o.$emot_list_panel.trigger("hidden.yp.modal")
+                    }
+                })
+        },
+        fEmotHashBuild: function () {
+            var a = this,
+                o = '<img style="width: ${1}px; height: ${2}px;" src="${0}">';
+            yp.each(a.oEmot, function (t, e) {
+                    a.oEmotRight[e] = "sys" == e ? -1 : 0,
+                    yp.each(t, function (n, i) {
+                        n.binary = Math.pow(2, t.length - i - 1),
+                        n.html = yp.format(o, n.src, n.width, n.height),
+                        n.emotCate = e,
+                        a.oEmotHash[n.key] = n
+                    })
+                })
+        },
+        fEmotContentToNum: function (a) {
+            var o = this,
+                t = [],
+                e = {},
+                n = [],
+                i = "";
+            return a ? (n = a.match(o.emotRe)) ? (yp.each(n, function (a, n) {
+                    o.oEmotHash[a] && "sys" != o.oEmotHash[a].emotCate && -1 == $.inArray(a, t) && (t.push(a), e[o.oEmotHash[a].emotCate] = e[o.oEmotHash[a].emotCate] || 0, e[o.oEmotHash[a].emotCate] += o.oEmotHash[a].binary)
+                }), yp.each(e, function (a, o) {
+                    i += o + "#" + a + ";"
+                }), i = i.slice(0, i.length - 1)) : "" : i
+        },
+        fEmotNumToImg: function (a, o) {
+            var t = this,
+                e = [],
+                n = [],
+                i = {};
+            return o && -1 != o && (e = o.split(";")),
+            e.push("sys#-1"),
+            yp.each(e, function (a) {
+                    n = a.split("#"),
+                    3 == n.length && (n[1] = -1),
+                    i[n[0]] = n[1]
+                }),
+            a.replace(t.emotRe, function (a, e) {
+                    return t.oEmotHash[a] ? -1 == o ? t.oEmotHash[a].html : t.oEmotHash[a].binary != (t.oEmotHash[a].binary & i[t.oEmotHash[a].emotCate]) ? "" : t.oEmotHash[a].html : a
+                })
+        },
+        fSetEmotRight: function (a) {
+            var o, t, e = this,
+                n = {};
+            a = a || "",
+            -1 != a && (o = a.split(";"), yp.each(o, function (a) {
+                    t = a.split("#"),
+                    3 == t.length && (t[1] = -1),
+                    n[t[0]] = t[1]
+                }));
+            for (var i in e.oEmotRight) e.oEmotRight[i] = -1 == a ? -1 : n[i] || 0;
+            e.fRanderEmot()
+        },
+        fRanderEmot: function () {
+            var a = this,
+                o = a._ui;
+            yp.each(a.oEmotHash, function (t, e) {
+                    "sys" != t.emotCate && (o.$emot_list_panel.find('.js-emot-item[data-face="' + e + '"] .js-emot-div').toggleClass("no-Unlock", t.binary != (t.binary & a.oEmotRight[t.emotCate])), t.toHide && 1 == t.toHide && o.$emot_list_panel.find('.js-emot-item[data-face="' + e + '"]').toggle(t.binary == (t.binary & a.oEmotRight[t.emotCate])))
+                }),
+            yp.each(a.oEmotRight, function (a, t) {
+                    "sys" != t && o.$emot_list_panel.find('.js-emot-banner[data-type="' + t + '"]').toggle(0 == a)
+                })
+        },
+        fEmotToString: function () {
+            var a = this,
+                o = [];
+            for (var t in a.oEmotHash) o.push(t.replace(/[\[\]]/g, ""));
+            return o
+        },
+        fFansAboutInit: function () {
+            var a = this,
+                o = a._ui;
+            o.$fans_sign_btn = $("#js-fans-sign-btn"),
+            o.$fans_list_panel = o.$js_right_chat_panel.find(".js-fans-list-panel"),
+            o.$fans_sign_btn.titleTips(),
+            a.fFansEvent(),
+            a.fFansBeSign(),
+            a.fFansWeekRank()
+        },
+        fFansBeSign: function () {
+            var a = this,
+                o = a._ui;
+            return o.$fans_sign_btn.removeClass("sign-fans").removeClass("sign-on").html("成为粉丝").attr("title", "一次性送主播价值1000战旗币(100金币)礼物可以成为粉丝"),
+            oPageConfig.oLoginInfo ? void yp.ajax("/api/actives/signin/fans.status", {
+                    data: {
+                        roomId: oPageConfig.oRoom.id
+                    },
+                    type: "post",
+                    dataType: "json"
+                }).done(function (a) {
+                    0 == a.code ? o.$fans_sign_btn.addClass("sign-fans").html("签到").titleTips("fSetTitle", "").attr("title", "") : 1 == a.code && o.$fans_sign_btn.addClass("sign-on").html("已签").titleTips("fSetTitle", "").attr("title", "")
+                }) : !1
+        },
+        fFansWeekRank: function () {
+            var a = this,
+                o = a._ui,
+                t = new Date,
+                e = "";
+            e = "" + t.getFullYear() + (t.getMonth() + 1) + t.getDate() + t.getHours(),
+            yp.ajax(yp.format("/api/static/room.fansweekrank/${roomId}-${count}.json?_t=${t}", {
+                    roomId: oPageConfig.oRoom.id,
+                    count: 10,
+                    t: e
+                }), {
+                    dataType: "json"
+                }).done(function (t) {
+                    if (0 == t.code) {
+                        var e = t.data.week,
+                            n = t.data.total;
+                        if (0 == e.length) o.$fans_list_panel.find(".no-rank-week").show();
+                        else {
+                                o.$fans_list_panel.find(".no-rank-week").hide();
+                                var i = a.fFansListHtml(e);
+                                o.$fans_list_panel.find(".week-rank-layer").html(i).show()
+                            }
+                        if (0 == n.length) o.$fans_list_panel.find(".no-rank-all").show();
+                        else {
+                                o.$fans_list_panel.find(".no-rank-all").hide();
+                                var s = a.fFansListHtml(n);
+                                o.$fans_list_panel.find(".all-rank-layer").html(s).show()
+                            }
+                    }
+                })
+        },
+        fFansListHtml: function (a) {
+            var o = "",
+                t = "",
+                e = "",
+                n = (a.length, ["first", "second", "third", "fourth"]);
+            return yp.each(a, function (o, i) {
+                    4 > i ? t += '<li class="' + n[i] + '">                            <a href="javascript:;" class="fans-rank-item" data-uid="' + o.uid + '" title="' + o.nickname + '">                              <div class="img-box">                                <i class="crown"></i>                                <img src="' + o.avatar + '-medium" alt="">                                <p class="name">' + o.nickname + '</p>                              </div>                              <div class="fans-name">                                <span class="sub-name">' + oPageConfig.oRoom.fansTitle + '</span>                                <i class="fans-level fans-' + o.level + '"></i>                              </div>                            </a>                          </li>' : 0 == i % 2 ? (e += '<li class="clearfix">                      <div class="fans-list-left">                        <i class="fans-grade png fans-grade-' + o.level + '"><span>' + oPageConfig.oRoom.fansTitle + '</span></i>                        <a href="javascript:;" class="fans-rank-item" data-uid="' + o.uid + '"><span class="name di" title="' + o.nickname + '">' + o.nickname + "</span></a>                      </div>", i == a.length - 1 && (e += "</li>")) : e += '<div class="fans-list-right">                      <i class="fans-grade png fans-grade-' + o.level + '"><span>' + oPageConfig.oRoom.fansTitle + '</span></i>                      <a href="javascript:;" class="fans-rank-item" data-uid="' + o.uid + '"><span class="name di" title="' + o.nickname + '">' + o.nickname + "</span></a>                    </div>                  </li>"
+                }),
+            o += '<ul class="clearfix fans-ul">' + t + '</ul><ul class="content-ul">' + e + "</ul>"
+        },
+        fFansEvent: function () {
+            var a = this,
+                o = a._ui;
+            o.$fans_sign_btn.on("click", function (a) {
+                    a.preventDefault(),
+                    oPageConfig.oLoginInfo ? oPageConfig.oRoom.uid != oPageConfig.oLoginInfo.uid && o.$fans_sign_btn.hasClass("sign-fans") && (o.$fans_sign_btn.data("ajaxing") || (o.$fans_sign_btn.data("ajaxing", !0), yp.ajax("/api/actives/signin/fans.sign", {
+                        data: {
+                            roomId: oPageConfig.oRoom.id
+                        },
+                        type: "post",
+                        dataType: "json"
+                    }).done(function (a) {
+                        0 == a.code ? (yp.pub("page/rich/update", {
+                            type: "coin",
+                            num: a.data.coin
+                        }), o.$fans_sign_btn.removeClass("sign-fans").addClass("sign-on").html("已签").titleTips("fSetTitle", "").attr("title", ""), alert("恭喜你，获得" + a.data.coin + "战旗币礼包奖励。快去给主播送礼吧，亲密度越高每日奖励越高哦！")) : 1 == a.code ? o.$fans_sign_btn.removeClass("sign-fans").addClass("sign-on").html("已签").titleTips("fSetTitle", "").attr("title", "") : 3 == a.code ? (o.$fans_sign_btn.removeClass("sign-fans").html("成为粉丝").attr("title", "一次性送主播价值1000战旗币(100金币)礼物可以成为粉丝"), alert("你还未成为主播的粉丝。一次性送主播价值1000战旗币（100金币）礼物才能成为粉丝哦。")) : a.message && yp.errorNotify(a.message)
+                    }).always(function () {
+                        o.$fans_sign_btn.data("ajaxing", !1)
+                    }))) : yp.pub("page/login")
+                }),
+            yp.sub("page/fans/level/update", function (a, t) {
+                    oPageConfig.oLoginInfo && t.uid == oPageConfig.oLoginInfo.uid && 0 < t.level && !o.$fans_sign_btn.hasClass("sign-on") && !o.$fans_sign_btn.hasClass("sign-fans") && o.$fans_sign_btn.addClass("sign-fans").html("签到").titleTips("fSetTitle", "").attr("title", "")
+                });
+            var t = $('<div class="dropdownBox" id="yp-fans-set-admin" style="position:absolute; display: none;z-index:10;" data-uid="0"><ul role="menu" class="dropdown-ul"><li><a href="javascript:;" class="di fans-set-admin-item" data-type="admin">设为房管</a></li></ul></div>').appendTo(o.$fans_list_panel.find(".bd")),
+                e = 0;
+            o.$fans_list_panel.on("mouseenter", ".bd", function () {
+                    e = setTimeout(function () {
+                        var a = 240;
+                        o.$fans_list_panel.find(".content").animate({
+                            height: a
+                        }),
+                        o.$fans_list_panel.find(".js-defend-list-area").length && (o.$fans_list_panel.find(".js-defend-list-area .slimScrollDiv").height(a - 36), o.$fans_list_panel.find(".js-defend-list-area .js-scroll").height(a - 36))
+                    }, 100)
+                }).on("mouseleave", ".bd", function () {
+                    e && clearTimeout(e),
+                    o.$fans_list_panel.find(".content").stop().animate({
+                        height: 157
+                    }, function () {
+                        o.$fans_list_panel.find(".content").css({
+                            height: ""
+                        })
+                    }),
+                    t.hide()
+                }),
+            o.$fans_list_panel.on("click", ".fans-rank-item", function (a) {
+                    if (a.preventDefault(), oPageConfig.oLoginInfo && oPageConfig.oRoom.uid == oPageConfig.oLoginInfo.uid) {
+                        var o = $(this),
+                            e = o.data("uid"),
+                            n = o.position();
+                        n.top = n.top + o.outerHeight(),
+                        n.right = "auto",
+                        t.show().data("uid", e).css(n),
+                        $("body").off("click.fans.setadmin").on("click.fans.setadmin", function () {
+                                t.hide(),
+                                $("body").off("click.fans.setadmin")
+                            })
+                    }
+                    return !1
+                }),
+            o.$fans_list_panel.on("click", ".fans-set-admin-item", function (a) {
+                    a.preventDefault();
+                    var o = $(this),
+                        t = o.data("type"),
+                        e = o.closest(".dropdownBox").data("uid");
+                    "admin" == t && e && !isNaN(e) && yp.pub("page/setAdmin", {
+                            uid: +e,
+                            type: 10,
+                            action: 1
+                        })
+                })
+        },
+        oFunBtnHash: {},
+        nFunBtnCnt: 0,
+        nFunVisibleCnt: 0,
+        fRegistRoomFun: function (a) {
+            var o = this,
+                t = o._ui;
+            t.$room_fun_area || o.fAppendRoomFunArea();
+            var e = $(a.sHtml);
+            e.data("weight", a.weight || 0),
+            e.addClass("js-room-fun-item");
+            var n, i = t.$room_fun_area.find(".js-fun-btn-list .js-room-fun-item"),
+                s = !0;
+            return 0 < o.nFunBtnCnt && yp.each(i, function (a) {
+                    return n = $(a),
+                    n.data("weight") >= e.data("weight") ? (n.before(e), s = !1, !1) : void 0
+                }),
+            s && t.$room_fun_area.find(".js-fun-btn-list").append(e),
+            o.oFunBtnHash[a.key] = e,
+            o.nFunBtnCnt++,
+            o.fCheckFunBtnScrollBtn(),
+            e
+        },
+        fCheckFunBtnScrollBtn: function () {
+            var a = this,
+                o = a._ui;
+            a.nFunVisibleCnt = o.$room_fun_area.find(".js-room-fun-item:visible").length,
+            o.$room_fun_area.find(".js-fun-btn-scroll").toggle(4 < a.nFunVisibleCnt),
+            4 >= a.nFunVisibleCnt && o.$room_fun_area.find(".js-fun-btn-list").css({
+                    marginLeft: 0
+                })
+        },
+        fAppendRoomFunArea: function () {
+            var a = this,
+                o = a._ui,
+                t = "";
+            t += '<div><a href="javascript:;" class="pre js-fun-btn-scroll"></a>        <div class="gallery">          <ul class="clearfix js-fun-btn-list"></ul>        </div>        <a href="javascript:;" class="next js-fun-btn-scroll"></a></div>',
+            o.$room_fun_area = $(t),
+            $(".js-room-fun-area-left").prepend(o.$room_fun_area);
+            var e = o.$room_fun_area.find(".js-fun-btn-list");
+            o.$room_fun_area.on("click", ".js-fun-btn-scroll", function (o) {
+                    o.preventDefault();
+                    var t = parseInt(e.css("marginLeft")),
+                        n = 0,
+                        i = 85;
+                    if (4 < a.nFunVisibleCnt && !e.is(":animated")) {
+                            n = e.closest(".gallery").width() - a.nFunVisibleCnt * i + 5;
+                            var s;
+                            s = $(this).hasClass("next") ? t - i : t + i,
+                            s = Math.max(n, Math.min(s, 0)),
+                            s != t && e.animate({
+                                marginLeft: s
+                            }, "500", "easeOutQuad")
+                        }
+                })
+        },
+        fLoadRoomAds: function (a) {
+            return yp.ajax(yp.format("/api/static/ads/${position}/${roomId}-${gameId}.json", {
+                position: a,
+                roomId: oPageConfig.oRoom.id,
+                gameId: oPageConfig.oRoom.gameId
+            }), {
+                type: "get",
+                data: {
+                    _v: Math.floor($.now() / 6e4)
+                },
+                dataType: "json"
+            })
+        },
+        fAfterAdsShow: function (a) {
+            $.ajax({
+                url: "https://tj.zhanqi.tv/ad.show?roomId=" + oPageConfig.oRoom.id + "&ids=" + a.join(","),
+                type: "get",
+                dataType: "jsonp"
+            })
+        },
+        fLoadSmallAds: function () {
+            var a = this,
+                o = a._ui;
+            return oPageConfig.oSmallAds ? (sHtml = '<li>          <a target="_blank" href="' + oPageConfig.oSmallAds.adsUrl + '">            <img src="' + oPageConfig.oSmallAds.pic + '" alt="' + oPageConfig.oSmallAds.title + '">          </a>        </li>', o.$small_ads = a.fRegistRoomFun({
+                    sHtml: sHtml,
+                    key: "ads",
+                    weight: 10
+                }), void(oPageConfig.oSmallAds && oPageConfig.oSmallAds.cpm && a.fAfterAdsShow([oPageConfig.oSmallAds.id]))) : !1
+        },
+        fLoadPullAds: function () {
+            var a = this;
+            a._ui;
+            if (!a.bRoomPage || !oPageConfig.aPullAdss) return !1;
+            if (oPageConfig.aPullAdss.length) {
+                var o = "",
+                    t = [];
+                yp.each(oPageConfig.aPullAdss, function (a) {
+                        o += '<li>            <a href="' + a.adsUrl + '" target="_blank" rel="nofollow" class="img-box js-room-ads-item">              <img src="' + a.pic + '" alt="' + a.title + '">            </a>          </li>',
+                        a.cpm && t.push(a.id)
+                    }),
+                sHtml = '<div class="pullpic-down" id="js-room-ads-panel">          <div class="pullpic-top"></div>          <div class="pullpic-content-pr js-slide-layer">            <div class="pullpic-content js-slide-content">              <div class="pullpic-content-top" style="display:none;"></div>              <div class="pullpic-content-mid">                <ul>' + o + '</ul>              </div>              <div class="pullpic-content-bottom"></div>            </div>          </div>          <div class="round js-slide-btn"><i class="light" style="display:none;"></i></div>        </div>',
+                $("#js-pull-ads-layer").append(sHtml),
+                yp.use("roomAds", function (a, o) {
+                        o.init()
+                    }),
+                t.length && a.fAfterAdsShow(t)
+            }
+        },
+        oModulLoadFun: {
+            anchor: "fLoadAnchorModule",
+            ticket: "fLoadTickModule",
+            admin: "fLoadAdminModule",
+            guess: "fLoadGuessModul",
+            translate: "fLoadTranslateModul",
+            recommend: "fLoadRecommendModul",
+            guide: "fLoadGuideModul",
+            bonus: "fLoadBounsModul",
+            "package": "fLoadPackageModul"
+        },
+        oLoadedModule: {},
+        fLoadAnchorModule: function () {
+            var a = this;
+            oPageConfig.oLoginInfo && oPageConfig.oLoginInfo.uid == oPageConfig.oRoom.uid && !a.oLoadedModule.anchor && (a.oLoadedModule.anchor = "done", yp.use("forAnchor", function (a, o) {
+                o.init()
+            }))
+        },
+        fLoadTickModule: function () {
+            var a = this;
+            a.oLoadedModule.ticket = "done",
+            yp.use("planeTicketNew", function (a, o) {
+                o.init()
+            })
+        },
+        fLoadAdminModule: function (a) {
+            var o = this;
+            10 <= a.permission && !o.oLoadedModule.admin && (o.oLoadedModule.admin = "done", yp.use("adminpanel", function (o, t) {
+                t.init(a)
+            }))
+        },
+        fLoadGuessModul: function () {
+            var a = this;
+            oPageConfig.oRoom.permission.guess && yp.use("guess", function (o, t) {
+                t.init(),
+                o.module.fPropertyVal("oGuess", "oRich", a.oRich)
+            })
+        },
+        fLoadTranslateModul: function () {
+            oPageConfig.oRoom.permission.translate && oPageConfig.oRoom.translateLanguages && 0 < oPageConfig.oRoom.translateLanguages.length && yp.use("translateNew", function (a, o) {
+                o.init(oPageConfig.oRoom.translateLanguages)
+            })
+        },
+        fLoadRecommendModul: function () {
+            var a = getQueryString("param_s");
+            a && (a = a.split("."), a[0] && $.getScript(oPageConfig.oUrl.sUrlBase + "j/widget/qiniangRecommend.js?v=" + window.oYpConfig.ver))
+        },
+        fLoadGuideModul: function () {
+            yp.use("guide", function (a, o) {
+                o.init()
+            })
+        },
+        fLoadBounsModul: function () {
+            var a = this;
+            oPageConfig.oRoom.bonus && yp.use("hongbaoNew", function (o, t) {
+                t.init(),
+                o.module.fPropertyVal("oHongbao", "oRich", a.oRich)
+            })
+        },
+        fLoadPackageModul: function () {
+            var a = this;
+            yp.use("roomPropNew, propPopInfoNew", function (o, t, e) {
+                e.init(),
+                t.init(),
+                o.module.fPropertyVal("oPropPopInfoNew", "myRich", a.oRich.myRich)
+            })
+        },
+        fRenderRich: function (a) {
+            var o = this,
+                t = o._ui;
+            t.$user_rich_area.find(".js-user-rich-gold").html(a.gold),
+            t.$user_rich_area.find(".js-user-rich-coin").html(a.coin),
+            a.goldEnable ? a.goldLocked ? t.$user_rich_gold_lock.show().attr("title", "目前有" + a.goldLocked + "金币冻结，结束游戏后解冻") : t.$user_rich_gold_lock.hide().attr("title", "") : t.$user_rich_gold_lock.show().attr("title", "金币被冻结，无法使用！")
+        }
+    };
+    "undefined" != typeof module ? module.exports = a : "function" == typeof define && define.amd ? define(function () {
+        return a
+    }) : window.oBaseUI = a
+}();

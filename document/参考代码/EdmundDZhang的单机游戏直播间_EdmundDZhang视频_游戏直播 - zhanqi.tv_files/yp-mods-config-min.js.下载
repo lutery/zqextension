@@ -1,0 +1,419 @@
+/* ==========================================================
+ * yp: mods-config.js v20140225
+ * ==========================================================
+ *
+ * 模块配置
+ * ========================================================== */
++function(win) {
+
+  // 模块加载配置
+  win.mods = {
+    // 模块列表
+    // 可陪参数包括（js文件路径，css文件路径，shim依赖模块，jq方法名）
+    modList: {
+      'yp-objList': {
+        js: '../yp/lib/min/yp-objList-min'
+      }
+    , 'yp-socket': {
+        js: '../yp/yp-socket'
+      }
+    , 'yp-chat': {
+        js: '../yp/lib/min/yp-chat-min'
+      , shim: ['yp-objList']
+      }
+    , 'mvvm': {
+        js: '../yp/lib/avalon'
+      }
+    , 'ibox': {
+        js: 'min/jquery.ibox.min'
+      }
+    , 'flashobject': {
+        js: 'swfobject'
+      }
+    , 'json': {
+        js: 'json3.min'
+      }
+    , 'bootstrap': {
+        js: 'bootstrap/js/bootstrap'
+      , jq: ['tooltip', 'popover']
+      }
+    , 'tabs': {
+        js: 'min/tabs.jquery.min'
+      }
+    , 'scroll': {
+        js: 'jquery.slimscroll.min'
+      }
+    , 'lazyload': {
+        js: 'jquery.lazyload.min'
+      }
+    , 'mousewheel': {
+        js: 'min/jquery.mousewheel.min'
+      }
+    , 'fileupload': {
+        js: 'min/ajaxfileupload-min'
+      }
+    , 'colpick': {
+        js: 'colpick/js/colpick-min'
+      }
+    , 'editor': {
+        js: 'editor/kindeditor/kindeditor'
+      }
+    , 'ZeroClipboard': {
+        js: 'ZeroClipboard/ZeroClipboard.min'
+      }
+    , 'xss': {
+        js: 'min/xss-min'
+      }
+    , 'inotify': {
+        js: 'min/jquery.inotify.min'
+      }
+    , 'pagination': {
+        js: 'min/pagination-min'
+      }
+    , 'pagination2': {
+        js: 'min/pagination2-min'
+      }
+    , 'titleTips': {
+        js: 'min/jquery.titleTips.min'
+      }
+    , 'sign': {
+        js: '../public/sign'
+      }
+    , 'WdatePicker': {
+        js: 'datepicker/WdatePicker'
+      }
+    , 'qrcode': {
+        js: 'min/jquery.qrcode.min'
+      }
+    , 'lottery': {
+        js: 'min/jquery.lottery.min'
+      }
+    , 'jCopy': {
+        js: 'min/jquery.jCopy.min'
+      }
+    , 'videoHover': {
+        js: 'min/jquery.videoHover.min'
+      }
+    , 'carousel': {
+        js: 'jquery.carousel'
+      }
+    , 'room-main': {
+        js: 'room-widget/min/main-min'
+      , shim: ['xss']
+      }
+    , 'room-lottery-caocao': {
+        js: 'room-widget/min/lottery_caocao-min'
+      }
+    , 'room-gift': {
+        js: 'room-widget/min/gift-min'
+      // , shim: ['keepCard', 'buyFire']
+      }
+    , 'room-surprise': {
+        js: 'room-widget/min/surprise-min'
+      }
+    , 'room-forAnchor': {
+        js: 'room-widget/min/forAnchor-min'
+      , shim: ['lottery', 'jCopy']
+      }
+    , 'room-common': {
+        js: 'room-widget/min/common-min'
+      , shim: ['jCopy']
+      }
+    , 'room-quiz': {
+        js: 'room-widget/min/quiz-min'
+      }
+    , 'room-flag': {
+        js: 'room-widget/min/flag-min'
+      }
+    , 'room-treasure': {
+        js: 'room-widget/min/treasure-min'
+      }
+    , 'room-leftpanel': {
+        js: 'room-widget/min/leftpanel-min'
+      }
+    , 'room-adminpanel': {
+        js: 'room-widget/min/adminpanel-min'
+      , shim: ['pagination']
+      }
+    , 'rich': {
+        js: 'rich'
+      }
+    , 'pca': {
+        js: 'pca'
+      }
+    , 'room-mainVideo': {
+        js: 'room-widget/min/mainVideo-min'
+      , shim: ['mvvm', 'xss']
+      }
+    , 'highcharts': {
+        js: 'highcharts/highcharts'
+      }
+    , 'rotate': {
+        js: 'jQueryRotate.2.2'
+      }
+    , 'carousel2': {
+        js: 'min/carousel2-min'
+      }
+    , 'room-gods': {
+        js: 'room-widget/min/gods-min'
+      }
+    /*, 'sticky': {
+        js: 'jquery.pin'
+      }*/
+    , 'state-machine': {
+        js: 'state-machine.min'
+      }
+    , 'stardesc': {
+        js: 'min/jquery.stardesc.min'
+      }
+    , 'newsroll': {
+        js: 'min/jquery.newsroll.min'
+      }
+    , 'room-liu': {
+        js: 'room-widget/min/liu-min'
+      }
+    , 'room-christmas': {
+        js: 'room-widget/min/christmas-min'
+      }
+    , 'room-task': {
+        js: 'room-widget/min/task-min'
+      , shim: ['pagination']
+      }
+    , 'room-guide':{
+        js: 'room-widget/min/guide2-min'
+      }
+    , 'room-marquee':{
+        js: 'room-widget/min/marquee-min'
+      , shim: ['carousel2']
+      }
+    , 'velocity.min':{
+        js: 'velocity.min'
+      }
+    , 'snowfall.jquery':{
+        js: 'min/snowfall.jquery.min'
+      }
+    , 'room-valentine':{
+        js: 'room-widget/min/valentine-min'
+      , shim: ['snowfall.jquery']
+      }
+    , 'jquery.vote': {
+        js: 'min/jquery.vote.min'
+      }
+    , 'room-sheepyear':{
+        js: 'room-widget/min/sheepYear-min'
+      }
+    , 'room-guess': {
+        js: 'room-widget/min/guess-min'
+      }
+    , 'rechargeData': {
+        js: 'min/rechargeData-min'
+      }
+    , 'roomRecharge': {
+        js: 'room-widget/min/roomRecharge-min'
+      }
+    , 'roomAds': {
+        js: 'room-widget/min/roomAds-min'
+      }
+    , 'zqSelect': {
+        js: 'min/jquery.select.min'
+      }
+    , 'phoneCode': {
+        js: 'min/jquery.phoneCode.min'
+      }
+    , phoneCheck: {
+        js: 'min/phoneCheck.min'
+      , shim: ['zqSelect', 'phoneCode']
+      }
+      /* 秀场 */
+    , 'room-common-show': {
+        js: 'room-widget/showGirl/min/common-min'
+      , shim: ['jCopy']
+      }
+    , 'room-forAnchor-show': {
+        js: 'room-widget/showGirl/min/forAnchor-min'
+      }
+    , 'room-gift-show': {
+        js: 'room-widget/showGirl/min/gift-min'
+      , shim: ['keepCard', 'buyFire']
+      }
+    , 'room-grap-game': {
+        js: 'room-widget/showGirl/min/grapGame-min'
+      }
+      /* 秀场 end */
+    , 'h5game': {
+        js: 'room-widget/min/h5game-min'
+      }
+    , 'planeTicket': {
+        js: 'room-widget/min/planeTicket-min'
+      , shim: ['zqSelect', 'xss', 'jquery.gameSelect']
+      }
+    , 'keepCard': {
+        js: 'min/keepCard-min'
+      }
+    , 'buyFire': {
+        js: 'min/buyFire-min'
+      }
+    , 'logList': {
+        js: 'min/log-common-min'
+      , shim: ['pagination']
+      }
+    , 'videoList': {
+        js: 'min/jquery.videoList.min'
+      , shim: ['pagination']
+      }
+    , 'paginationList': {
+        js: 'min/jquery.paginationList.min'
+      , shim: ['pagination']
+      }
+    , 'hongbao': {
+        js: 'room-widget/min/hongbao-min'
+      }
+    , 'tianshu': {
+        js: 'room-widget/tianshu'
+      , shim: ['jquery.gameSelect']
+      }
+    , 'jquery.pagetransitions': {
+        js: 'min/jquery.pagetransitions.min'
+      }
+    , 'translate': {
+        js: 'room-widget/min/translate-min'
+      }
+    , 'room-face': {
+        js: 'room-widget/min/face-min'
+      }
+    , 'buyCar': {
+        js: 'min/buyCar-min'
+      , shim: ['zqSelect']
+      }
+    , 'buyDefend': {
+        js: 'min/buyDefend-min'
+      , shim: ['zqSelect']
+      }
+    , 'car': {
+        js: 'room-widget/min/car-min'
+      }
+    , 'defend': {
+        js: 'room-widget/min/defend-min'
+      }
+    , 'google': {
+        js: 'room-widget/min/google-min'
+      , shim: ['zqSelect']
+      }
+    , 'jquery.gameSelect': {
+        js: 'min/jquery.gameSelect.min'
+      , shim: ['zqSelect']
+      }
+    , 'geetest': {
+        js: 'min/geetest-min'
+      }
+    , 'checkMobile': {
+        js: 'min/checkMobile-min'
+      }
+    , 'jquery.gameSelect': {
+        js: 'min/jquery.gameSelect.min'
+      , shim: ['zqSelect']
+      }
+    , 'createjs': {
+        js: 'createjs.min'
+      }
+    , 'specialEffects': {
+        js: 'room-widget/min/specialEffects-min'
+      , shim: ['createjs']
+      }
+    , 'propPopInfo': {
+        js: 'min/propPopInfo-min'
+      }
+    , 'nameCardPopInfo': {
+        js: 'min/nameCardPopInfo-min'
+      }
+    , 'buyProp': {
+        js: 'min/buyProp-min'
+      }
+    , 'roomProp': {
+        js: 'room-widget/min/roomProp-min'
+      }
+    , 'loginModule': {
+        js: 'min/loginModule-min'
+      }
+    , 'registModule': {
+        js: 'min/registModule-min'
+      }
+    , 'popRecharge':{
+        js: 'min/popRecharge-min'
+      }
+    /***** 4.0 *****/
+    , 'adminpanel': {
+        js: 'room4.0/min/adminpanel-min'
+      , shim: ['pagination']
+      }
+    ,'base': {
+        js: 'room4.0/min/base-min'
+      , shim: ['jCopy', 'paginationList']
+      }
+    ,'carNew': {
+        js: 'room4.0/min/car-min'
+      }
+    ,'defendNew': {
+        js: 'room4.0/min/defend-min'
+      }
+    ,'forAnchor': {
+        js: 'room4.0/min/forAnchor-min'
+      , shim: ['lottery', 'jCopy']
+      }
+    ,'gift': {
+        js: 'room4.0/min/gift-min'
+      }
+    ,'googleNew': {
+        js: 'room4.0/min/google-min'
+      , shim: ['zqSelect']
+      }
+    ,'guess': {
+        js: 'room4.0/min/guess-min'
+      }
+    ,'main': {
+        js: 'room4.0/min/main-min'
+      , shim: ['xss']
+      }
+    ,'planeTicketNew': {
+        js: 'room4.0/min/planeTicket-min'
+      , shim: ['zqSelect', 'xss', 'jquery.gameSelect']
+      }
+    ,'roomRechargeNew': {
+        js: 'room4.0/min/roomRecharge-min'
+      }
+    ,'task': {
+        js: 'room4.0/min/task-min'
+      , shim: ['pagination']
+      }
+    ,'translateNew': {
+        js: 'room4.0/min/translate-min'
+      }
+    , 'tianshuNew': {
+        js: 'room4.0/min/tianshu-min'
+      , shim: ['jquery.gameSelect']
+      }
+    ,'guide': {
+        js: 'room4.0/min/guide-min'
+      }
+    ,'hongbaoNew': {
+        js: 'room4.0/min/hongbao-min'
+      }
+    , 'popRechargeNew': {
+        js: 'min/popRechargeNew-min'
+      }
+    , 'roomPropNew': {
+        js: 'room4.0/min/roomProp-min'
+      }
+    /***** 4.0 end *****/
+    , 'dfp':{
+        js: 'min/dfp-min'
+      }
+    , 'timegift':{
+        js: 'min/jquery.timegift.min'
+      }
+    }
+  };
+
+  win.baseList = ['ibox', 'scroll'];
+
+}(window);

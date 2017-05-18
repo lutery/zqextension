@@ -1,0 +1,271 @@
+/* 礼物横幅 */
+.send-gifts-ibox{
+  position:absolute;
+  top:90px;left:0;
+  z-index: 10;
+}
+.send-gifts-ibox .gifts-icon{
+  position:absolute;
+  top:6px;left:7px;
+  margin-left:0 !important;
+  width:48px !important;height:48px !important;
+  border-radius:3px;
+  background:#fff;
+}
+
+.send-gifts-inner{
+  position:relative;
+  padding-left:70px;
+  width:270px;height:60px;
+  background:url(../../i/index/gifts-bg.png?20161209999) no-repeat;
+  font-size:12px;
+  font-weight:700;
+}
+
+.send-gifts-ibox .name{
+  width:260px;height:34px;
+  line-height:34px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.send-gifts-ibox .send-bottom{
+  height:16px;line-height:16px;
+  font-size:0;
+}
+.send-gifts-ibox .send-bottom .gifts-name{
+  font-size:12px;
+}
+
+.send-gifts-ibox .send-gifts-inner .nums-area{
+  margin-left:5px;
+  padding:0 10px;
+  height:14px;line-height:14px;
+  font-size:0;
+  font-weight:400;
+  border-radius:7px;
+  border:1px solid #8180bd;
+  border:1px solid rgba(255,255,255,.5);
+  background:url(../../i/index/mask-20.png) repeat;
+  color:#fff;
+}
+
+.send-gifts-ibox .send-gifts-inner .nums-area span{
+  font-size:12px;
+}
+
+.send-gifts-ibox .send-gifts-inner .gifts-num{
+  position:absolute;
+  top:20px;right:8px;
+  height:23px;
+  overflow: hidden;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .symbol{
+  float:left;
+  margin-top:6px;
+  width:15px;height:13px;
+  background:url(../../i/index/cha.png?2016120999) no-repeat;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .nums{
+  float:left;
+  margin-left:1px;
+  width:18px;height:23px;
+  background:url(../../i/index/gifts-nums.png?20161209999) repeat;
+}
+
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-0{
+  background-position:0 0;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-1{
+  background-position:0 -23px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-2{
+  background-position:0 -46px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-3{
+  background-position:0 -69px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-4{
+  background-position:0 -92px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-5{
+  background-position:0 -115px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-6{
+  background-position:0 -138px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-7{
+  background-position:0 -161px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-8{
+  background-position:0 -184px;
+}
+.send-gifts-ibox .send-gifts-inner .gifts-num .num-9{
+  background-position:0 -207px;
+}
+
+/* 第一档金币礼物 */
+.first-gifts-ibox .send-gifts-inner{
+  background-position:0 0;
+  color:#8e8e8e;
+}
+/* 第二档金币礼物 */
+.second-gifts-ibox .send-gifts-inner{
+  background-position:0 -60px;
+  color:#0f9fb8;
+}
+/* 第三档金币礼物 */
+.third-gifts-ibox .send-gifts-inner{
+  background-position:0 -120px;
+  color:#fff;
+  color:rgba(255,255,255,.7);
+}
+/* 第四档金币礼物 */
+.fourth-gifts-ibox .send-gifts-inner{
+  background-position:0 -180px;
+  color:#866d1e;
+}
+/* 第五档金币礼物 */
+.fifth-gifts-ibox .send-gifts-inner{
+  background-position:0 -240px;
+  color:#fff;
+  color:rgba(255,255,255,.7);
+}
+
+/* 礼物高亮特效 */
+.send-batter-ibox .send-gifts-inner:before{
+  -webkit-animation-name:"giftsHeightLight"; 
+  -webkit-animation-duration:1.8s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function:ease;
+
+  -moz-animation-name:"giftsHeightLight"; 
+  -moz-animation-duration:1.8s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function:ease;
+
+  -ms-animation-name:"giftsHeightLight"; 
+  -ms-animation-duration:1.8s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function:ease;
+
+  animation-name:"giftsHeightLight"; 
+  animation-duration:1.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function:ease;
+
+  content: "";
+  position:absolute;
+  width:250px;height:60px;
+  top:0;left:-100%;
+  overflow: hidden;
+  background:-moz-linear-gradient(left, rgba(255,255,255,0)0, rgba(255,255,255,.7)50%, rgba(255,255,255,0)100%);
+
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255,255,255,0)), color-stop(50%, rgba(255,255,255,.7)), color-stop(100%, rgba(255,255,255,0)));
+
+  background: -webkit-linear-gradient(left, rgba(255,255,255,0)0, rgba(255,255,255,.7)50%, rgba(255,255,255,0)100%);
+
+  background: -o-linear-gradient(left, rgba(255,255,255,0)0, rgba(255,255,255,.7)50%, rgba(255,255,255,0)100%);
+  -webkit-transform: skewX(-25deg);
+  -moz-transform: skewX(-25deg);
+  -o-transform: skewX(-25deg);
+  transform: skewX(-25deg);
+
+  -webkit-transition:opacity .1s ease;
+  -moz-transition:opacity .1s ease;
+  -ms-transition:opacity .1s ease;
+  -o-transition:opacity .1s ease;
+  transition:opacity .1s ease;
+}
+
+@-webkit-keyframes giftsHeightLight{
+  0%{left:-100%;opacity:0;}
+  1%{left:-100%;opacity:1;}
+  90%{left:150%;opacity:1;}
+  99%{left:150%;opacity:0;}
+  100%{left:-100%;opacity:0;}
+}
+
+@-moz-keyframes giftsHeightLight{
+  0%{left:-100%;opacity:0;}
+  1%{left:-100%;opacity:1;}
+  90%{left:150%;opacity:1;}
+  99%{left:150%;opacity:0;}
+  100%{left:-100%;opacity:0;}
+}
+
+@-ms-keyframes giftsHeightLight{
+  0%{left:-100%;opacity:0;}
+  1%{left:-100%;opacity:1;}
+  90%{left:150%;opacity:1;}
+  99%{left:150%;opacity:0;}
+  100%{left:-100%;opacity:0;}
+}
+
+@keyframes giftsHeightLight{
+  0%{left:-100%;opacity:0;}
+  1%{left:-100%;opacity:1;}
+  90%{left:150%;opacity:1;}
+  99%{left:150%;opacity:0;}
+  100%{left:-100%;opacity:0;}
+}
+/* 礼物高亮特效End */
+
+/* 放烟花横幅 */
+.yanhua-gifts-ibox{
+  position:absolute;
+  top:0;left:0;
+  z-index: 10;
+}
+.yanhua-gifts-ibox .gifts-icon{
+  position:absolute;
+  top:6px;left:6px;
+  margin-left:0 !important;
+  width:48px !important;height:48px !important;
+  border-radius:3px;
+  background:#fff;
+}
+
+.yanhua-gifts-ibox .send-gifts-inner{
+  position:relative;
+  padding-left:70px;
+  width:270px;height:60px;
+  background:url(../../i/index/yanhua-bg.png) no-repeat;
+  color:#fff;
+  color:rgba(255,255,255,.7);
+  font-size:12px;
+  font-weight:700;
+}
+
+.yanhua-gifts-ibox .name{
+  width:260px;height:34px;
+  line-height:34px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.yanhua-gifts-ibox .send-bottom{
+  height:16px;line-height:16px;
+  font-size:12px;
+}
+.yanhua-gifts-ibox .send-bottom .num{
+  color:#ff004e;
+  font-size:14px;
+  font-weight:700;
+}
+
+/* 第一档烟花礼物 */
+.first-yanhua-ibox .send-gifts-inner{
+  background-position:0 -60px;
+}
+/* 第二档烟花礼物 */
+.second-yanhua-ibox .send-gifts-inner{
+  padding-top:20px;
+  height:60px;
+  background-position:0 -120px;
+  color:#ffea00;
+  color:rgba(255,234,0,.8);
+}
+.second-yanhua-ibox .send-gifts-inner .gifts-icon{top:26px;}

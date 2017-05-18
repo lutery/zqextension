@@ -1,0 +1,283 @@
+// 根据屏幕宽度，设置body的类
+var realWinWidth = $(window).width()
+  , scrollWidth = mediaWinWidth - realWinWidth
+  , $footArea = $('.footArea')
+  , $topBar = $('.topBar');
+
+window.curBodyClass = '';
+window.newBodyClass = '';
+function fBodyClass(e){
+  var winWidth = $(window).width() + scrollWidth
+  if( 1919 >= winWidth && 1211 <= winWidth ) {
+    newBodyClass = 'size1440';
+  } else if( 1210 >= winWidth ) {
+    newBodyClass = 'size960';
+  } else {
+    newBodyClass = '';
+  }
+  if(!$('body').hasClass('maxScreen') && curBodyClass != newBodyClass){
+    curBodyClass && $('body').removeClass(curBodyClass);
+    newBodyClass && $('body').addClass(newBodyClass);
+    curBodyClass = newBodyClass;
+    yp.pub && e && yp.pub('page/bodyclass/change', { bodyClass: newBodyClass });
+  }
+}
+$(window).resize(fBodyClass);
+fBodyClass();
+
+// 数字分割，加“,”
+function addCommas(nStr) { 
+  nStr += ''; 
+  x = nStr.split('.'); 
+  x1 = x[0]; 
+  x2 = x.length > 1 ? '.' + x[1] : ''; 
+  var rgx = /(\d+)(\d{3})/; 
+  while (rgx.test(x1)) { 
+    x1 = x1.replace(rgx, '$1' + ',' + '$2'); 
+  } 
+  return x1 + x2; 
+}
+
+function hmtTongJi(type, key, value1, value2, value3){
+  if( !window._hmt || !_hmt.push ){
+    return false;
+  }
+
+  if( 'siteBanner' == type ){
+    switch( key ){
+      case 'index_recommend':   // 首页推荐位
+      case 'index_trailer':   // 首页精彩预告
+      case 'index_game_list':   // 首页热门游戏
+      case 'index_news_scroll':   // 首页新闻轮播
+      case 'index_banner':   // 首页两个广告位
+      case 'danji_banner':   // 单机二级两个广告位
+      case 'topic_ti5_banner':  // ti5专题页，广告
+      case 'chuanqi_banner':   // 传奇两个广告位
+      case 'chuanqi_fixed_banner':   // 传奇右上角定位广告位
+        _hmt.push(['_trackEvent', key, key + '_' + value1]);
+        break;
+      case 'room_banner':   // 直播间长条广告
+      case 'chat_list_banner':   // 直播间长条广告
+      case 'gift_area_banner':  // 礼物区的广告
+      case 'room_chat_notice':   // 直播间聊天区公告(直播间tips)
+      case 'room_flash_banner':   // 直播间flash广告
+        _hmt.push(['_trackEvent', key + '_by_game', key + '_by_game_' + value1]);
+        break;
+        break;
+      case 'room_recommend_banner':   // 直播间热门推广广告
+      case 'room_pull_banner':   // 直播间，拉环广告，点击
+      case 'room_xiuchang_banner':   // 直播间，秀场模板，左侧广告，点击
+        _hmt.push(['_trackEvent', key + '_by_game_' + value3, key + '_by_game_' + value3 + '_' + value1]);
+        break;
+      case 'room_pull_banner_show':   // 直播间，拉环广告，展开
+        _hmt.push(['_trackEvent', key + '_by_game', key + '_by_game_' + value1]);
+        break;
+      case 'left_side_banner':  // 左侧栏广告
+        if( !oPageConfig.oRoom ){
+          _hmt.push(['_trackEvent', key + '_' + value1, 0]);
+        } else {
+          _hmt.push(['_trackEvent', key + '_' + value1 + '_by_game', key + '_' + value1 + '_by_game_' + oPageConfig.oRoom.gameId]);
+        }
+        break;
+      case 'game_room_list_banner':   // 游戏下的直播间列表广告
+        _hmt.push(['_trackEvent', key, key + '_game_' + value1]);
+        break;
+    }
+  } else if( 'room' == type ){
+    switch( key ){
+      case 'left_set_close':
+      case 'left_set_open':
+        if( value1 ){
+          _hmt.push(['_trackEvent', type, key, value1]);
+        } else {
+          _hmt.push(['_trackEvent', type, key]);
+        }
+        break;
+    }
+  } else if( 'h5game' == type ){
+    if( value1 ){
+      _hmt.push(['_trackEvent', key, value1]);
+    } else {
+      _hmt.push(['_trackEvent', key, 0]);
+    }
+  }
+}
+
+function qnTongji(source_roomid, target_roomid, position, target_type){
+  source_roomid = source_roomid.split('_');
+
+  var postData = {
+    uid: oPageConfig.oLoginInfo ? oPageConfig.oLoginInfo.uid : 0
+  , gid: 0
+  , source_roomid: source_roomid[1]
+  , source_type: source_roomid[0]
+  , target_roomid: target_roomid
+  , position: position
+  , target_type: target_type
+  };
+
+  yp.ajax(oPageConfig.oUrl.sQnTongjiUrl, {
+    type: 'post'
+  , data: postData
+  , dataType: 'json'
+  });
+}
+
+function fSortArr(arr, sort){
+  var sortArr = [];
+  for( var i = 1, len = arguments.length; i < len; i++ ){
+    if( 'string' == $.type(arguments[i]) ){
+      arguments[i] = { by: arguments[i], bAsc: true }
+    }
+    sortArr.push(arguments[i]);
+  }
+  arr.sort(function(a, b){
+    return fSort(a, b, 0);
+  });
+  function fSort(a, b, index){
+    var sort = sortArr[index];
+    if(!sort){
+      return 0;
+    }
+    if( 'string' == $.type( sort.by ) ){
+      return fCompare(a[ sort.by ], b[ sort.by ]);
+    } else {
+      var av = sort.by(a)
+        , bv = sort.by(b);
+      return fCompare(av, bv);
+    }
+
+    function fCompare(av, bv){
+      if( av != bv ){
+        return sort.bAsc ? av - bv : bv - av;
+      } else {
+        index++;
+        return fSort(a, b, index);
+      }
+    }
+  }
+}
+
+function getQueryString(name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]); return null;
+}
+
+function fDateFormat(format, time){
+  var date = new Date();
+  if( time && !isNaN(time) ){
+    date.setTime(time);
+  }
+
+  var o = {
+    "M+": date.getMonth() + 1, //月份
+    "d+": date.getDate(), //日 
+    "h+": date.getHours(), //小时
+    "m+": date.getMinutes(), //分
+    "s+": date.getSeconds(), //秒
+    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+    "S": date.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(format)) format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+      if (new RegExp("(" + k + ")").test(format)) format = format.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return format;
+}
+
+window.fLevelIconClass = function(level, pos){
+  var iconClass = 'all-level-' + level
+    , posClass = ['', '', '', '', '', '', '', '', 'all-level-god', 'all-level-creator'];
+
+  if( 8 == pos || 9 == pos ){
+    iconClass = posClass[ pos ];
+  }
+
+  if( 35 < level ){
+    iconClass = '';
+  }
+
+  return iconClass;
+};
+
+window.aLevel = [''
+  , '青铜5', '青铜4', '青铜3', '青铜2', '青铜1'
+  , '白银5', '白银4', '白银3', '白银2', '白银1' // 6
+  , '黄金5', '黄金4', '黄金3', '黄金2', '黄金1' // 11
+  , '白金5', '白金4', '白金3', '白金2', '白金1' // 16
+  , '钻石5', '钻石4', '钻石3', '钻石2', '钻石1' // 21
+  , '大师5', '大师4', '大师3', '大师2', '大师1' // 26
+  , '王者5', '王者4', '王者3', '王者2', '王者1' // 31
+];
+window.sLevelPos = ['', '青铜', '白银', '黄金', '白金', '钻石', '大师', '王者', '神', '创世神'];
+window.aGuard = ['', '平民', '剑士', '骑士', '伯爵', '侯爵', '公爵', '国王'];
+
+/*********************** 无处安放的方法 *************************/
+;(function($, window, undefined){
+
+  /*
+   * 多页签的视频切换
+   * options = { activeClass: '', aRooms: [], index: 1 };
+  */
+  $.fn.changeRooms = function(options){
+    var $element = $(this)
+      , curIndex = options.index;
+
+    if( options.aRooms&&(!options.aRooms.length) ){
+      return false;
+    }
+
+    options.hoverClass || ( options.hoverClass = 'hover' );
+
+    $element.find('.js-change-item').on('click', function(e){
+      e.preventDefault();
+      var $this = $(this)
+        , index = $this.data('index');
+
+      if( curIndex != index ){
+        $element.find('.' + options.activeClass).removeClass(options.activeClass);
+        $this.addClass(options.activeClass);
+
+        curIndex = index;
+        $element.trigger('roomsChanged', { $obj: $element, oRoom: options.aRooms[ curIndex - 1 ] });
+      }
+    }).on('mouseenter', function(){
+      $(this).addClass(options.hoverClass);
+    }).on('mouseleave', function(){
+      $(this).removeClass(options.hoverClass);
+    });
+  };
+
+  /*
+   * 表单，label和输入框的交互
+  */
+  $.fn.formLabel = function(options){
+    var $element = $(this)
+      , $inputs = $element.find('.js-form-input')
+      , $labels = $element.find('.js-form-label');
+
+    $labels.on('click', function(e){
+      e.preventDefault();
+      $(this).closest('.js-form-group').find('.js-form-input').focus();
+    });
+    var inputEvent = 'input'
+      , ie678 = window.ie678;
+    ie678 && ( inputEvent = 'propertychange' );
+    $inputs.on(inputEvent, function(){
+      var $this = $(this);
+      if('' == $this.val()){
+        $this.closest('.js-form-group').find('.js-form-label').fadeIn();
+      } else {
+        $this.closest('.js-form-group').find('.js-form-label').fadeOut();
+      }
+      options.inputEventCall && options.inputEventCall.call($element, $this);
+    }).on('blur', function(){
+      var $this = $(this);
+      if('' == $this.val()){
+        $this.closest('.js-form-group').find('.js-form-label').fadeIn();
+      }
+    });
+  };
+
+})(jQuery, window);
+/*********************** 无处安放的方法 end *************************/

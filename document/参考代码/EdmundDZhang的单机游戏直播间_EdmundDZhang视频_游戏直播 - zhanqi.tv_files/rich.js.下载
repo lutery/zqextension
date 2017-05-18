@@ -1,0 +1,98 @@
+/*
+* 货币组件
+*/
++function(){
+
+  var oRich = {
+    myRich: { coin: 0, gold: 0, goldLocked: 0, goldEnable: 1, coinEnable: 1 }
+  , options: {
+      sGetRichUrl: ''
+    }
+  , init: function(options){
+      var self = this;
+
+      self.options = $.extend(true, self.options, options);
+      self.listenYpEvent();
+      self.fGetRich();
+    }
+  , listenYpEvent: function(){
+      var self = this;
+      yp.sub('page/login/done', function(){
+        self.fGetRich();
+      });
+      yp.sub('page/regist/done', function(){
+        self.fGetRich();
+      });
+      yp.sub('page/logout/done', function(){
+        self.fGetRich();
+      });
+      yp.sub('page/rich/update', function(e, data){
+        self.fRichUpdate(data.num, data.type);
+      });
+      yp.sub('page/rich/set', function(e, data){
+        self.fRichSet(data.num, data.type);
+      });
+    }
+  , fRichInit: function(){
+      var self = this;
+      self.myRich = { coin: 0, gold: 0, goldLocked: 0, goldEnable: 1, coinEnable: 1 };
+      yp.pub('page/rich/change', self.myRich);
+    }
+    // 获取战旗币
+  , fGetRich: function(){
+      var self = this;
+      if( oPageConfig.oLoginInfo ){
+        if( oPageConfig.oLoginInfo.rich ){
+          self.fSetRich({ coin: { count: oPageConfig.oLoginInfo.rich.coin, enable: 1 }, gold: { count: oPageConfig.oLoginInfo.rich.gold, lock: 0, enable: 1 } });
+        } else {
+          self.fGetRichAjax();
+        }
+      } else {
+        self.fRichInit();
+      }
+    }
+  , fGetRichAjax: function(){
+      var self = this;
+
+      yp.ajax(self.options.sGetRichUrl, {
+        dataType: 'json'
+      }).done(function(data){
+        if( 0 != data.code ){
+          self.fSetRich(data.data);
+        } else {
+          self.fRichInit();
+        }
+      });
+    }
+  , fSetRich: function(oRich){
+      var self = this;
+      self.myRich.coin = oRich.coin.count;
+      self.myRich.gold = oRich.gold.count;
+      self.myRich.goldLocked = oRich.gold.lock;
+      self.myRich.goldEnable = +oRich.gold.enable;
+      self.myRich.coinEnable = +oRich.coin.enable;
+      yp.pub('page/rich/change', self.myRich);
+    }
+  , fReturnRich: function(key){
+      return key ? this.myRich[key] : this.myRich;
+    }
+  , fRichUpdate: function(num, key){
+      if(!key || undefined == this.myRich[key]){
+        return false;
+      }
+
+      this.myRich[key] = +this.myRich[key] + +num;
+      yp.pub('page/rich/change', this.myRich);
+    }
+  , fRichSet: function(num, key){
+      if(!key || undefined == this.myRich[key]){
+        return false;
+      }
+
+      this.myRich[key] = +num;
+      yp.pub('page/rich/change', this.myRich);
+    }
+  };
+
+  "undefined"!=typeof module?module.exports=oRich:"function"==typeof define&&define.amd?define(function(){return oRich}):window.oRich=oRich;
+}();

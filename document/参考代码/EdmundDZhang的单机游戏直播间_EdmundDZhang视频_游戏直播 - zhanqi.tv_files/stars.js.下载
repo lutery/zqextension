@@ -1,0 +1,146 @@
+yp.use('base, main, rich, task, carNew, defendNew, rechargeData, roomRechargeNew, gift, videoHover', function(yp, oBaseUI, oMainData, oRich, oTask, car, defend, oRechargeData, oRoomRecharge, oGift){
+  yp.ready(function(){
+    var ui = {};
+
+    ui.$win = $(window);
+    ui.$body = $('body');
+
+    ui.$js_right_chat_panel = $('#js-right-chat-panel');  // 右侧整一块区域
+    ui.$js_chat_msg_scroll = ui.$js_right_chat_panel.find('.js-chat-msg-scroll');  // 聊天显示区
+    ui.$js_chat_layer = ui.$js_right_chat_panel.find('.js-right-chat-layer');
+    ui.$room_anchor_info_area = $('#js-room-anchor-info-area');  // 主播信息区域
+    ui.$room_desc_collapse_btn = $('#js-room-desc-collapse-btn');
+    ui.$room_super_panel = $('#js-room-super-panel');
+    ui.$flash_layer = $('#js-flash-layer');
+    ui.$live_message = $('.liveMessage');
+
+    var oPage = {
+      init: function(){
+        this.view();
+        this.bindEvent();
+        this.listenYpEvent();
+        this.listenSocketEvent();
+        this.fTopAnimate();
+      }
+    , view: function(){
+        this.fBodyClass();
+        this.fChatListResize();
+        yp.module.fCallFun('oBaseUI', 'fAnchorDescImgAuto', []);
+      }
+    , bindEvent: function(){
+        var self = this;
+
+        ui.$room_desc_collapse_btn.on('click', function(e){
+          e.preventDefault();
+          ui.$room_super_panel.toggleClass('open-star-top');
+
+          var t = new Date();
+          t.setTime( t.getTime() + 315360000000 );
+          $.cookie('top_animate_custom', +ui.$room_super_panel.hasClass('open-star-top'), { expires: t, path: '/' });
+        });
+
+        // ui.$room_anchor_info_area.on('mouseenter', function(){
+        //   ui.$room_anchor_info_area.addClass('anchor-hover');
+        // }).on('mouseleave', function(){
+        //   ui.$room_anchor_info_area.removeClass('anchor-hover');
+        // });
+      }
+    , listenYpEvent: function(){
+        var self = this;
+
+        yp.sub('ui/resize', function(){
+          self.fBodyClass();
+        });
+
+        yp.sub('page/room/chatsize/reset', function(){
+          self.fChatListResize();
+        });
+
+        yp.sub('page/room/bodyclass/change', function(){
+          self.fChatListResize();
+          yp.module.fCallFun('oBaseUI', 'fAnchorDescImgAuto', []);
+        });
+      }
+    , listenSocketEvent: function(){}
+      // 聊天区，高度调整
+    , fChatListResize: function(){
+        var self = this;
+
+        var rightChatHeight = ui.$room_anchor_info_area.outerHeight() + ui.$flash_layer.height() + ui.$live_message.outerHeight() //ui.$js_right_chat_panel.height()高度不准确，只能取左侧的来计算
+          , fans_list_height = ui.$js_right_chat_panel.find('.js-fans-list-panel').length ? ui.$js_right_chat_panel.find('.js-fans-list-panel').outerHeight() : 0  // 粉丝榜高度
+          , ads_height = (ui.$js_right_chat_panel.find('.js-chat-ads').length && ui.$js_right_chat_panel.find('.js-chat-ads').is(':visible')) ? ui.$js_right_chat_panel.find('.js-chat-ads').outerHeight() : 0  // 广告区域高度
+          , control_height = ui.$js_right_chat_panel.find('.js-chat-control').outerHeight()
+          , chat_list_height;
+
+        chat_list_height = Math.max(rightChatHeight - fans_list_height - ads_height - control_height - 10, 0);
+        ui.$js_chat_layer.height(chat_list_height);
+        ui.$js_chat_msg_scroll.add( ui.$js_chat_msg_scroll.closest('.slimScrollDiv') ).height(chat_list_height);
+      }
+    , curBodyClass: ''
+    , fBodyClass: function(){
+        var self = this
+          , winWidth = ui.$win.width() + scrollWidth
+          , newBodyClass = '';
+
+        if( 1279 >= winWidth ){
+          newBodyClass = 'power1280';
+        } else if( 1281 <= winWidth && 1599 >= winWidth ){
+          newBodyClass = 'power1600';
+        } else if( 1600 <= winWidth ){
+          newBodyClass = 'power1920';
+        } else {
+          newBodyClass = '';
+        }
+
+        if(!ui.$body.hasClass('maxScrean') && self.curBodyClass != newBodyClass){
+          self.curBodyClass && ui.$body.removeClass(self.curBodyClass);
+          newBodyClass && ui.$body.addClass(newBodyClass);
+          self.curBodyClass = newBodyClass;
+          yp.pub('page/room/bodyclass/change', { bodyClass: newBodyClass });
+        }
+      }
+      // 顶部动画
+    , fTopAnimate: function(){
+        var self = this
+          , top_animate_guide = $.cookie('top_animate_guide')
+          , top_animate_custom = $.cookie('top_animate_custom')
+          , bOpenTop = false;
+
+        if( !top_animate_guide && Modernizr.cssanimations ){
+          $('.js-animate-listen').off('transitionend webkitTransitionEnd').on('transitionend webkitTransitionEnd', function(){
+            $('.js-animate-listen').off('transitionend webkitTransitionEnd');
+            ui.$room_super_panel.removeClass('open-star-top');
+
+            var t = new Date();
+            t.setTime( t.getTime() + 315360000000 );
+            $.cookie('top_animate_guide', 1, { expires: t, path: '/' });
+          });
+          bOpenTop = true;
+        } else if( 1 == +top_animate_custom ){
+          bOpenTop = true;
+        }
+
+        if( bOpenTop ){
+          ui.$room_super_panel.addClass('open-star-top');
+        }
+      }
+    };
+
+    oRich.init({ sGetRichUrl: oPageConfig.oUrl.sGetRichUrl });
+    oBaseUI.init(oRich);
+
+    oPage.init();
+    
+    oGift.init();
+    oTask.init();
+    car.init();
+    defend.init();
+
+    oRoomRecharge.oRechargeData = oRechargeData;
+    oRoomRecharge.init();
+
+    oMainData.init();
+    yp.module.fPropertyVal('oMainData', 'oRich', oRich);
+    yp.module.fPropertyVal('oGift', 'oRich', oRich);
+  });
+});

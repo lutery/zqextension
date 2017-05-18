@@ -1,0 +1,51 @@
+$(document).ready(function() {
+  var oPageConfig = window.oPageConfig
+    , oRoom = oPageConfig.oRoom
+
+  var oFlashInit = {
+    init: function(){
+      if (window != window.parent && !window.bAllow) {
+        return false;
+      }
+      
+      yp.sub('msgc/ready', function(e) {
+        flashReadyDtd.resolve();
+      });
+      var width = $('#yp-main .inner').width()
+            , height = Math.min(9 * width / 16, $(window).height() - 180);
+
+      $('#yp-player-live').css({ width: width, height: height });
+      // 初始化socket
+      oPageConfig.oFlash.vars = oRoom.flashvars;
+      if( oPageConfig.oViewer && oPageConfig.oViewer.uid == oPageConfig.oRoom.uid ){
+        oPageConfig.oFlash.vars.SelfRoom = 1;
+      }
+      oPageConfig.oFlash.vars.UID = oPageConfig.oViewer ? oPageConfig.oViewer.uid : ( oPageConfig.oLoginInfo ? oPageConfig.oLoginInfo.uid : 0 );
+      oPageConfig.oFlash.vars.GID = oPageConfig.oViewer ? oPageConfig.oViewer.gid : 0;
+
+      oPageConfig.oFlash.callback = function( callbackObj ){
+        var noFlashHtml = '<div class="no-flash">您未安装Flash或者版本过低，请点击<a href="http://get.adobe.com/cn/flashplayer/" target="_blank">这里</a>安装</div>'
+          , $contain = $('#' + callbackObj.id);
+        if(!callbackObj.success){
+          $contain.html(noFlashHtml).css({ position: 'relative', width: '100%', height: '100%' });
+        }
+      }
+
+      var cookie_ip = $.cookie('cookie_ip') || ''
+        , new_cookie_ip = []
+      if( cookie_ip ){
+        cookie_ip = cookie_ip.split(',');
+        yp.each(cookie_ip, function(one){
+          if( one && -1 == $.inArray(one, new_cookie_ip) ){
+            new_cookie_ip.push(one);
+          }
+        });
+        oPageConfig.oFlash.vars.cips = new_cookie_ip.join(',');
+      }
+
+      yp.socket.init(oPageConfig.oFlash);
+    }
+  };
+
+  oFlashInit.init();
+});

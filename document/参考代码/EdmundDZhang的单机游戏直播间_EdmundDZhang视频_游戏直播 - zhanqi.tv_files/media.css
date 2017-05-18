@@ -1,0 +1,69 @@
+/* 1280以下分辨率 */
+/* power1280 */
+@media screen and (max-width:1279px){
+	.live-star-page .live-star-content{left:74px;}
+  .live-room-content .anchor-info-area .sub-bottom .sub-right{
+    position:relative;
+  }
+  .live-room-content .anchor-info-area .sub-bottom .sub-right .dyue-area{
+    position:absolute;
+    top:-30px;right:0;
+  }
+  .live-star-page .live-room-content .anchor-info-area .sub-bottom .sub-right .dyue-area{
+    right:16px;
+  }
+  .live-room-content .anchor-info-area .sub-top .label-area{
+    display:none;
+  }
+}
+
+/* 1280到1600分辨率 */
+/* power1600 */
+@media screen and (min-width:1281px) and (max-width:1599px){
+  .live-room-content .anchor-info-area .sub-bottom .sub-right{
+    position:relative;
+  }
+  .live-room-content .anchor-info-area .sub-bottom .sub-right .dyue-area{
+    position:absolute;
+    top:-30px;right:0;
+  }
+  .live-star-page .live-room-content .anchor-info-area .sub-bottom .sub-right .dyue-area{
+    right:16px;
+  }
+  .live-room-content .anchor-info-area .sub-top .label-area{
+    display:none;
+  }
+}
+
+
+/* 1600以上分辨率 */
+/* power1920 */
+@media screen and (min-width:1600px){
+  .live-star-page .live-stars-top .live-stars-top-content,
+  .live-star-page .live-star-content{width:1400px;}
+  .live-star-page .live-star-content .live-room-content{width:1060px;}
+  .live-star-page .live-stars-bottom{width:1400px;}
+
+  .live-star-page .qniang-tj li,
+  .live-star-page .qniang-live .lives-list li,
+  .live-star-page .hot-tg .bd li{margin-right:30px;width:249px;}
+  
+  .live-star-page .qniang-tj .bd .img-box,
+  .live-star-page .qniang-live .bd .img-box,
+  .live-star-page .hot-tg .bd li,
+  .live-star-page .qniang-live .lives-list .img-box{height:140px;}
+
+  .live-star-page .qniang-live .lives-list a,
+  .live-star-page .lives-list .room-name{width:249px;}
+  
+  .live-star-page .qniang-tj .bd .meat .anchor{width:227px;}
+  .live-star-page .qniang-tj .bd .room-name{width:240px;}
+  .live-star-page .qniang-live .lives-list .meat .anchor{
+    max-width:158px;
+  }
+  
+  .live-star-page .pullpic-down{right:33%;}
+  .live-star-page .live-chat-content .liveDialog{height:413px;}
+  .live-star-page .live-room-content .video-flash-cont{height:596px;}
+
+}

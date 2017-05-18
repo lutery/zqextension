@@ -1,0 +1,239 @@
+/*
+ * 道具查看、使用弹窗
+*/
++function(){
+
+  var oPropPop = {
+    _ui: {}
+  , myRich: null
+  , oRechargeData: {}
+  , source: 'live'
+  , init: function(){
+      yp.module.fRegistModule('oPropPopInfoNew', this);
+      
+      this.view();
+      this.bindEvent();
+      this.listenYpEvent();
+    }
+  , view: function(){
+      var self = this
+        , _ui = self._ui;
+
+      $('body').append('<div class="knapsack-ibox js-prop-view-pop-panel" id="js-prop-view-pop-panel" style="display: none">\
+                          <a href="javascript:;" class="close js-close" style="z-index: 10"></a>\
+                          <div class="left-area">\
+                            <img src="" alt="" class="js-prop-img">\
+                          </div>\
+                          <div class="right-area">\
+                            <div class="sub-top">\
+                              <span class="dv name js-prop-name"></span>\
+                              <i class="dv js-prop-price-company"></i>\
+                              <span class="dv num js-prop-price"></span>\
+                            </div>\
+                            <div class="js-prop-desc" style="height: 40px">\</div>\
+                            <p class="time-area">时效：<span class="js-prop-end-time"></span></p>\
+                            <div class="nums-area clearfix">\
+                              <div class="nums-left">拥有数量：<span class="js-prop-use-cnt-txt"></span></div>\
+                              <div class="nums-right clearfix js-prop-use-area">\
+                                <div class="sub-input">\
+                                  <input type="hidden" class="js-prop-id"/>\
+                                  <input type="text" class="input js-prop-use-cnt-input">\
+                                </div>\
+                                <a href="javascript:;" class="nums-btn js-use-btn">使用</a>\
+                              </div>\
+                            </div>\
+                          </div>\
+                        </div>');
+
+      _ui.$prop_view_pop_panel = $('#js-prop-view-pop-panel');
+    }
+  , bindEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$prop_view_pop_panel.on('click', '.js-close', function(e){
+        e.preventDefault();
+        self.fHidePropInfoPanel();
+      });
+
+      _ui.$prop_view_pop_panel.on('click', '.js-use-btn', function(e){
+        e.preventDefault();
+        self.fUseProp();
+      });
+    }
+  , listenYpEvent: function(){
+      var self = this
+        , _ui = self._ui;
+
+      yp.sub('page/prop/view', function(e, data){
+        self.fShowPropInfoPanel(data.propId, data.source);
+      });
+
+      yp.sub('page/rich/change', function(e, data){
+        self.myRich = data;
+      });
+
+      yp.sub('page/alipay/qrcode/complete', function(e, data){
+        if( 'prop' == data.source && _ui.$prop_view_pop_panel.is(':visible') ){
+          confirm('充值成功，继续使用该道具？', function(){
+            var cnt = _ui.$prop_view_pop_panel.find('.js-prop-use-cnt-input').val()
+              , propId = _ui.$prop_view_pop_panel.find('.js-prop-id').val()
+              , oPropInfo = (oPageConfig.oProp && oPageConfig.oProp[propId]) ? oPageConfig.oProp[propId] : '';
+
+            if( oPropInfo ){
+              var goldExtra = (cnt - oPropInfo.count) * oPropInfo.price;
+              self.fDoUseProp(cnt, oPropInfo, goldExtra);
+            }
+          });
+        }
+      });
+    }
+    // 显示道具弹窗
+  , fShowPropInfoPanel: function(propId, source){
+      var self = this
+        , _ui = self._ui;
+
+      if( !oPageConfig.oProp || !oPageConfig.oProp[propId] || !!!source){
+        return false;
+      }
+
+      var oPropInfo = oPageConfig.oProp[propId];
+
+      self.source = source;
+
+      // 图标
+      _ui.$prop_view_pop_panel.find('.js-prop-img').attr('src', oPropInfo.img.descImg);
+      // 名字
+      _ui.$prop_view_pop_panel.find('.js-prop-name').html(oPropInfo.name);
+      // 价格
+      if( oPropInfo.buyCoinType ){
+        _ui.$prop_view_pop_panel.find('.js-prop-price').html(oPropInfo.price);
+        _ui.$prop_view_pop_panel.find('.js-prop-price-company').removeClass('gold-icon silver-icon').addClass(1 === +oPropInfo.buyCoinType ? 'silver-icon' : 'gold-icon');
+        _ui.$prop_view_pop_panel.find('.js-prop-price-company').show();
+      } else {
+        _ui.$prop_view_pop_panel.find('.js-prop-price').html('无价');
+        _ui.$prop_view_pop_panel.find('.js-prop-price-company').hide();
+      }
+      // 时效
+      _ui.$prop_view_pop_panel.find('.js-prop-end-time').html( oPropInfo.endTime && 0 != +oPropInfo.endTime ? fDateFormat('yyyy-MM-dd hh:mm:ss', oPropInfo.beginTime * 1000) + ' 到 ' + fDateFormat('yyyy-MM-dd hh:mm:ss', oPropInfo.endTime * 1000): '永久' );
+      // 简介
+      _ui.$prop_view_pop_panel.find('.js-prop-desc').html( oPropInfo.txt.descTxt );
+      // 使用
+      _ui.$prop_view_pop_panel.find('.js-prop-use-area').toggle( 1 === +oPropInfo.available && 4 != oPropInfo.type );
+      _ui.$prop_view_pop_panel.find('.js-prop-use-cnt-txt').html( oPropInfo.count );
+      _ui.$prop_view_pop_panel.find('.js-prop-use-cnt-input').val( Math.min(oPropInfo.count, 1) );
+      _ui.$prop_view_pop_panel.find('.sub-input').toggle( oPropInfo.multiUse != 0 );
+      // 道具id
+      _ui.$prop_view_pop_panel.find('.js-prop-id').val( oPropInfo.id );
+
+      _ui.$prop_view_pop_panel.show();
+    }
+    // 隐藏道具弹窗
+  , fHidePropInfoPanel: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$prop_view_pop_panel.hide();
+    }
+    // 使用道具
+  , fUseProp: function(){
+      var self = this
+        , _ui = self._ui;
+
+      if( _ui.$prop_view_pop_panel.data('ajaxing') ){
+        return false;
+      }
+
+      var cnt = _ui.$prop_view_pop_panel.find('.js-prop-use-cnt-input').val()
+        , propId = _ui.$prop_view_pop_panel.find('.js-prop-id').val()
+        , oPropInfo = (oPageConfig.oProp && oPageConfig.oProp[propId]) ? oPageConfig.oProp[propId] : '';
+
+      if( !oPropInfo ){
+        yp.errorNotify('无该道具信息');
+        return false;
+      }
+
+      var canUse = 1 === +oPropInfo.available;
+      if( !canUse ){
+        yp.errorNotify('当前道具不能在此页面上使用');
+        return false;
+      }
+
+      if( !cnt || isNaN(cnt) || -1 != cnt.indexOf('.') ){
+        yp.errorNotify('请正确填写使用数量');
+        return false;
+      }
+      
+      if( cnt > oPropInfo.count ){
+        yp.errorNotify('使用数量超过当前已有数量');
+        return false;
+      }
+      if( !oPropInfo.multiUse && 1 > cnt ){
+        yp.errorNotify('该道具不允许同时使用多个');
+        return false;
+      }
+
+      //if( oPropInfo.count >= cnt ){
+      self.fDoUseProp(cnt, oPropInfo);
+      // } else {
+      //   var goldExtra = (cnt - oPropInfo.count) * oPropInfo.price;
+
+      //   if( goldExtra <= self.myRich.gold ){
+      //     self.fDoUseProp(cnt, oPropInfo, goldExtra);
+      //   } else {
+      //     yp.pub('page/alipay/qrcode/pay', { show: 1, gold: (goldExtra - self.myRich.gold), type: 'alipay', source: 'prop' });
+      //   }
+      // }
+    }
+    // 确定使用道具
+  , fDoUseProp: function(cnt, oPropInfo, goldExtra){
+      var self = this
+        , _ui = self._ui
+        , propId = oPropInfo.id;
+
+      goldExtra && yp.pub('page/rich/update', { type: 'gold', num: ( 0 - +goldExtra ) });
+
+      if( 3 == +oPropInfo.type ){
+        yp.use('nameCardPopInfoNew', function(yp, oNamePropInfo){
+          oNamePropInfo.init();
+          yp.pub('page/nameCard/view', { propInfo: oPropInfo, source: self.source });
+          self.fHidePropInfoPanel();
+        });
+      } else if( 1 == + oPropInfo.type) {
+        if( $.isEmptyObject(oPageConfig.oRoom) || !!! oPageConfig.oRoom.id ){
+          yp.errorNotify('礼物道具不能在这里使用哦！~');
+          return false;
+        }
+
+        _ui.$prop_view_pop_panel.data('ajaxing', true);
+      
+        yp.ajax('/api/user/prop.useGift', {
+          type: 'post'
+        , data: { count: cnt, pid: propId, roomId: oPageConfig.oRoom.id }
+        , dataType: 'json'
+        }).always(function(){
+          _ui.$prop_view_pop_panel.data('ajaxing', false);
+        }).done(function(data){
+          if( 0 == data.code ){
+            yp.successNotify('礼物使用成功');
+
+            oPageConfig.oProp[ propId ].count = oPageConfig.oProp[ propId ].count - cnt;
+            oPageConfig.oProp[ propId ].count = Math.max(0, oPageConfig.oProp[ propId ].count);
+            
+            yp.pub('page/prop/used', { propId: propId, cnt: cnt});
+            yp.pub('page/room/gift/myself', { pid: +data.data.pid, count: +cnt });
+
+            self.fHidePropInfoPanel();
+          } else {
+            yp.ajaxNotice(data);
+            goldExtra && yp.pub('page/rich/update', { type: 'gold', num: +goldExtra });
+          }
+        }).fail(function(){
+          goldExtra && yp.pub('page/rich/update', { type: 'gold', num: +goldExtra });
+        });
+      }
+    }
+  };
+
+  "undefined"!=typeof module?module.exports=oPropPop:"function"==typeof define&&define.amd?define(function(){return oPropPop}):window.oPropPop=oPropPop;
+}();

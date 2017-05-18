@@ -1,0 +1,495 @@
+/* 字体图标 */
+.icon-arrow-down5{
+	width:13px;height:13px;
+	background:url(../i/font-icon.png?2016030155) no-repeat;
+	background-position:0 0;
+}
+a:hover .icon-arrow-down5{background-position:-20px 0;}
+
+.icon-arrow-left7{
+	width:13px;height:13px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-40px 0;
+}
+.icon-arrow-left7:hover{background-position:-60px 0;}
+
+.icon-uniE7D2{
+	width:13px;height:13px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-80px 0;
+}
+.icon-uniE7D2:hover{background-position:-100px 0;}
+
+.icon-play{
+	width:15px;height:11px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-120px 0;
+	border-radius:3px;
+}
+
+.icon-eye{
+	width:15px;height:11px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-140px 0;
+}
+
+/*.icon-spinner6{
+	display:inline-block;
+	*display:inline;
+	*zoom:1;
+	vertical-align:middle;
+	width:15px;height:14px;
+	background:url(../i/font-icon.png?2016032499) no-repeat;
+	background-position:-160px 0;
+}
+a:hover .icon-spinner6{background-position:-180px 0;}*/
+.icon-spinner6{
+	display:inline-block;
+	*display:inline;
+	*zoom:1;
+	vertical-align:-3px;
+	width:15px;height:15px;
+	background:url(../i/change-btn.png) 0 0 no-repeat;
+}
+a:hover .icon-spinner6{background-position: 0 -15px;}
+
+.icon-users2{
+	width:16px;height:14px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-200px 0;
+}
+
+.icon-profile{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-220px 0;
+}
+.active .icon-profile,
+a:hover .icon-profile{background-position:-240px 0;}
+
+.icon-aid{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-260px 0;
+}
+.active .icon-aid,
+a:hover .icon-aid{background-position:-280px 0;}
+
+.icon-stats{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-300px 0;
+}
+.active .icon-stats,
+a:hover .icon-stats{background-position:-320px 0;}
+
+.icon-heart2{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-340px 0;
+}
+.active .icon-heart2,
+a:hover .icon-heart2{background-position:-360px 0;}
+
+.icon-clock{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-380px 0;
+}
+.active .icon-clock,
+a:hover .icon-clock{background-position:-400px 0;}
+
+.icon-clock-blue{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-880px -20px;
+}
+
+.icon-envelope{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-420px 0;
+}
+.active .icon-envelope,
+a:hover .icon-envelope{background-position:-440px 0;}
+
+.icon-cog{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-460px 0;
+}
+.active .icon-cog,
+a:hover .icon-cog{background-position:-480px 0;}
+
+.icon-gift{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-500px 0;
+}
+.active .icon-gift,
+a:hover .icon-gift{background-position:-520px 0;}
+
+.icon-camera2{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-540px 0;
+}
+.active .icon-camera2,
+a:hover .icon-camera2{background-position:-560px 0;}
+
+.icon-coin{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-580px 0;
+}
+.active .icon-coin,
+a:hover .icon-coin{background-position:-600px 0;}
+
+.icon-dribbble3{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-620px 0;
+}
+.active .icon-dribbble3,
+a:hover .icon-dribbble3{background-position:-640px 0;}
+
+.icon-signup{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-660px 0;
+}
+.active .icon-signup,
+a:hover .icon-signup{background-position:-680px 0;}
+
+.icon-shield{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-700px 0;
+}
+.active .icon-shield,
+a:hover .icon-shield{background-position:-720px 0;}
+
+.search-page .icon-heart{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-740px 0;
+}
+
+.personal-center .icon-heart{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-760px 0;
+}
+
+/* 留空橙色空爱心 */
+.orange-hollow-heart{
+	width:16px;height:16px;
+	background:url(../i/font-icon.png?20150916) no-repeat;
+	background-position:-780px 0;
+}
+
+.icon-pencil{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-800px 0;
+}
+
+a:hover .icon-pencil{background-position:-820px 0;}
+
+.icon-blocked{
+  width:12px;height:12px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-840px 0;
+}
+
+.icon-checkmark{
+  width:12px;height:12px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-860px 0;
+}
+
+.icon-youtube2{
+  width:16px;height:12px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-880px 0;
+  border-radius:3px;
+}
+
+.icon-happy{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-900px 0;
+}
+a:hover .icon-happy{background-position:-920px 0;}
+
+.icon-user3{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-940px 0;
+}
+a:hover .icon-user3{background-position:-960px 0;}
+
+.icon-gift1{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:0 -20px;
+}
+a:hover .icon-gift1{background-position:-20px -20px;}
+
+.icon-remove2{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-40px -20px;
+}
+a:hover .icon-remove2{background-position:-60px -20px;}
+
+.icon-blocked1{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-80px -20px;
+}
+a:hover .icon-blocked1{background-position:-100px -20px;}
+
+.icon-mobile{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:12px;height:12px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-360px -20px;
+}
+a:hover .icon-mobile{background-position:-380px -20px;}
+
+.icon-share{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:12px;height:12px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-400px -20px;
+}
+a:hover .icon-share{background-position:-420px -20px;}
+
+.live-and-chat-right-area .icon-happy{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-440px -20px;
+}
+a:hover .live-and-chat-right-area .icon-happy{
+  background-position:-460px -20px;
+}
+
+.live-and-chat-right-area .icon-user3{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-480px -20px;
+}
+a:hover .live-and-chat-right-area .icon-user3{
+  background-position:-500px -20px;
+}
+
+.live-and-chat-right-area .icon-gift1{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-520px -20px;
+}
+a:hover .live-and-chat-right-area .icon-gift1{
+  background-position:-540px -20px;
+}
+
+.live-and-chat-right-area .icon-remove2{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16pnx;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-560px -20px;
+}
+a:hover .live-and-chat-right-area .icon-remove2{
+  background-position:-580px -20px;
+}
+
+.live-and-chat-right-area .icon-blocked1{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-600px -20px;
+}
+a:hover .live-and-chat-right-area .icon-blocked1{
+  background-position:-620px -20px;
+}
+
+.live-room-page .live-anchor-info a:hover .icon-arrow-down5{background-position:-700px -20px;
+}
+
+.live-room-celebrity .live-anchor-info .icon-users2{
+  background-position:-740px -20px;
+}
+
+.live-room-celebrity .live-anchor-info .icon-mobile{
+  background-position:-640px -20px;
+}
+
+.live-room-celebrity .live-anchor-info .icon-share{
+  background-position:-660px -20px;
+}
+
+.live-room-celebrity .live-anchor-info .icon-arrow-down5,
+.live-room-celebrity .live-anchor-info a:hover .icon-arrow-down5{background-position:-680px -20px;
+}
+
+.icon-previous{
+  display:block;
+  width:12px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-760px -20px;
+}
+a:hover .icon-previous{
+  background-position:-780px -20px;
+}
+a:active .icon-previous{
+  background-position:-800px -20px;
+}
+
+.icon-next{
+  display:block;
+  width:12px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-820px -20px;
+}
+a:hover .icon-next{
+  background-position:-840px -20px;
+}
+a:active .icon-next{
+  background-position:-860px -20px;
+}
+
+.white-horn-icon{
+  width:20px;height:17px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-900px -20px;
+}
+
+.gray-heart-icon{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-920px -20px;
+}
+
+.set-icons{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-940px -20px;
+}
+
+.money-icons{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-960px -20px;
+}
+
+.data-icons{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-980px -20px;
+}
+
+.icon-search{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:15px;height:15px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-20px -40px;
+}
+
+.gray-icon-search{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:15px;height:15px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:0 -40px;
+}
+
+.yellow-bell-icon{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-60px -40px;
+}
+
+.write-icon-users2{
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?20150916) no-repeat;
+  background-position:-40px -40px;
+}
+
+.icon-happy-gif{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:24px;height:24px;
+  background:url(../i/font-icon-happy.gif) no-repeat;
+}
+
+.orange-icon-users2{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?2015112499) no-repeat;
+  background-position:-80px -40px;
+}
+
+.violet-icon-spinner6{
+  display:inline-block;
+  *display:inline;
+  *zoom:1;
+  vertical-align:middle;
+  width:15px;height:14px;
+  background:url(../i/font-icon.png?2016032499) no-repeat;
+  background-position:-120px -40px;
+}
+a:hover .violet-icon-spinner6{background-position:-140px -40px;}
+
+.type-icon-blue{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?2016033199) no-repeat;
+  background-position:-100px -40px;
+}
+
+.white-down-icon{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:14px;height:12px;
+  background:url(../i/font-icon.png?2016040899) no-repeat;
+  background-position:0 -60px;
+}
+
+.white-close-icon{
+  display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:14px;
+  background:url(../i/font-icon.png?2016040899) no-repeat;
+  background-position:-20px -60px;
+}
+
+.ggao-icons{
+	display:inline-block;
+  *display:inline;*zoom:1;
+  width:16px;height:16px;
+  background:url(../i/font-icon.png?2016030166) no-repeat;
+  background-position:-100px -40px;
+}

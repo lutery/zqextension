@@ -1,0 +1,61 @@
+yp.ready(function(){
+  var oChatBanner = {
+    _ui: {}
+  , bShowDfp: false
+  , opts: {}
+  , init: function(){
+      var self = this
+        , opts = self.opts
+        , _ui = self._ui;
+
+      _ui.$room_chat_banner_panel = $('#js-activity-show');
+      self.bShowDfp = oPageConfig.oChatBanner.dfp && !window.ie678;
+      self.bShowDfp ? self.fShowDFP() : self.fShowNormal();
+    }
+    // 判断是否支持canvas
+  , fCanvasSupport: function(){
+      var e = document.createElement("canvas");
+      return !!e.getContext && !!e.getContext("2d");
+    }
+    // 判断是否支持mp4
+  , fVideoSupport: function(){
+      var e=document.createElement("video"),n=!1;try{(n=!!e.canPlayType)&&(n=new Boolean(n),n.ogg=e.canPlayType('video/ogg; codecs="theora"').replace(/^no$/,""),n.h264=e.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/,""),n.webm=e.canPlayType('video/webm; codecs="vp8, vorbis"').replace(/^no$/,""))}catch(r){}return n;
+    }
+  , fShowNormal: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$room_chat_banner_panel.append('<a href="' + oPageConfig.oChatBanner.newUrl + '" target="_blank" class="room-chat-list-banner" onclick="ykarClick(2011,{ uid: oPageConfig.oLoginInfo ? oPageConfig.oLoginInfo.uid : 0, game_id: oPageConfig.oRoom.gameId, room_id: oPageConfig.oRoom.id, position: \'room.chat\' });"><img src="' + oPageConfig.oChatBanner.pic + '" alt="' + oPageConfig.oChatBanner.title + '"></a>');
+
+      self.fShowBanner();
+    }
+  , fShowDFP: function(){
+      var self = this
+        , _ui = self._ui;
+
+      yp.use('dfp', function(yp, oDFP){
+        _ui.$room_chat_banner_panel.html('<div id="' + oPageConfig.oChatBanner.remark + '" style="height:98px; width:320px;margin: 0 auto;"></div>');
+        oDFP.init('/140515149/zhanqi_320x98', oPageConfig.oChatBanner.remark, [320, 98], function(){
+          self.fShowBanner();
+        });
+      });
+    }
+  , fShowBanner: function(){
+      var self = this
+        , _ui = self._ui;
+
+      _ui.$room_chat_banner_panel.css({ height: '' }).show();
+      self.fShowData();
+      yp.pub('page/room/chatsize/reset');
+    }
+  , fShowData: function(){
+      $.ajax({
+        url: 'https://tj.zhanqi.tv/ad.show?roomId=' + oPageConfig.oRoom.id + '&ids=' + oPageConfig.oChatBanner.id
+      , type: 'get'
+      , dataType: 'jsonp'
+      });
+    }
+  };
+
+  oChatBanner.init();
+});

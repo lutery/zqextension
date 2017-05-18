@@ -1,0 +1,269 @@
+/* 直播间游戏入口&飞机票入口 */
+.live-new-fun{
+	position:absolute;
+	right:14px;bottom:150px;
+	width:45px;
+	z-index:15;
+}
+
+.live-airfare-area{
+	position:relative;
+	width:45px;height:45px;
+	margin-top:14px;
+}
+.live-airfare{
+	display:block;
+	width:45px;height:45px;
+	background:url(../i/live-airfare-bg.png) no-repeat;
+}
+.live-airfare:hover{background-position:0 -45px;}
+
+.live-airfare .tit-area {
+	position: absolute;
+	top:-4px;right:-6px;
+	width:20px;height:20px;
+	line-height:20px;
+	background:url(../i/room-icons.png) no-repeat;
+	background-position:-320px -780px;
+	font-size:12px;
+	color:#fff;
+	text-align:center;
+	overflow:hidden;
+}
+.live-airfare-area .close{
+	display:none;
+	position:absolute;
+	top:0;right:0;
+	width:17px;height:17px;
+	background:url(../i/play-close.png) no-repeat;
+}
+
+.live-translate-area{
+	position:relative;
+	width:45px;height:45px;
+	z-index:5;
+}
+.live-translate{
+	display:block;
+	width:45px;height:45px;
+	background:url(../i/live-translate-bg.png) no-repeat;
+}
+.live-translate:hover{background-position:-45px 0;}
+.live-translate:active{background-position:-90px 0;}
+
+.on-translate{background-position:0 -45px;}
+.on-translate:hover{background-position:-45px -45px;}
+.on-translate:active{background-position:-90px -45px;}
+
+.live-translate-area .close{
+	display:none;
+	position:absolute;
+	top:0;right:0;
+	width:17px;height:17px;
+	background:url(../i/play-close.png) no-repeat;
+}
+
+
+.live-game-entrance-area{
+	position:relative;
+	margin-top:14px;
+	width:45px;height:45px;
+}
+.live-game-entrance{
+	display:block;
+	width:45px;height:45px;
+	background:url(../i/live-game-btn.png) no-repeat;
+}
+
+.live-game-entrance:hover{background-position:0 -45px;}
+.live-game-entrance:active{background-position:0 -90px;}
+
+.live-game-entrance-area .close{
+	display:none;
+	position:absolute;
+	top:0;right:0;
+	width:17px;height:17px;
+	background:url(../i/play-close.png) no-repeat;
+}
+
+.live-game-entrance-area .close:hover,
+.live-airfare-area .close:hover{
+	background-position:-17px 0;
+}
+
+.live-game-entrance-area .close:active,
+.live-airfare-area .close:active{
+	background-position:-34px 0;
+}
+
+.live-new-fun .hover .close{display:block;}
+
+/* 直播间游戏弹窗 */
+.live-game-ibox{
+	position:fixed;
+	bottom:0;right:0;
+	width:340px;
+  z-index: 20;
+}
+.live-game-ibox .game-hd{
+	padding-top:10px;
+	width:100%;height:24px;
+	background:#54a4f1;
+	background: linear-gradient(left , #53aded , #5890f9 100%);
+	background: -o-linear-gradient(left , #53aded , #5890f9 100%);
+	background: -ms-linear-gradient(left , #53aded , #5890f9 100%);
+	background: -moz-linear-gradient(left , #53aded , #5890f9 100%);
+	background: -webkit-linear-gradient(left , #53aded , #5890f9 100%);
+	border-bottom:1px solid #7ab9f5;
+}
+.live-game-ibox .game-bd{
+	width:100%;height:227px;
+}
+.live-game-ibox .game-hd a{
+	_display:inline;
+	float:right;
+	margin-right:15px;
+	width:14px;height:13px;
+	background:url(../i/live-game-ibox-btn.png) no-repeat;
+}
+
+.live-game-ibox .game-hd a.game-help{
+  background: none;
+  color: #fff;
+  width: 30px;
+  line-height: 12px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.live-game-ibox .game-hd .close-btn{
+	background-position:0 0;
+}
+.live-game-ibox .game-hd .window-btn{
+	background-position:-14px 0;
+}
+.live-game-ibox .game-hd .max-btn{
+	background-position:-28px 0;
+}
+.live-game-ibox .game-hd .min-btn{
+	background-position:-42px 0;
+}
+
+.live-game-ibox .game-hd .close-btn:hover{
+	background-position:0 -13px;
+}
+.live-game-ibox .game-hd .window-btn:hover{
+	background-position:-14px -13px;
+}
+.live-game-ibox .game-hd .max-btn:hover{
+	background-position:-28px -13px;
+}
+.live-game-ibox .game-hd .min-btn:hover{
+	background-position:-42px -13px;
+}
+
+.live-game-ibox .game-hd .close-btn:active{
+	background-position:0 -26px;
+}
+.live-game-ibox .game-hd .window-btn:active{
+	background-position:-14px -26px;
+}
+.live-game-ibox .game-hd .max-btn:active{
+	background-position:-28px -26px;
+}
+.live-game-ibox .game-hd .min-btn:active{
+	background-position:-42px -26px;
+}
+
+/* 发红包按钮 */
+.live-game-hongbao-area{
+	position:relative;
+	left:-24px;bottom:-10px;
+	width:76px;height:86px;
+  	z-index:3;
+}
+.live-game-hongbao{
+	display:block;
+	width:76px;height:86px;
+	background:url(../i/hongbao/hongbao-icon.png) no-repeat;
+}
+
+.live-game-hongbao-area .close{
+	position:absolute;
+	top:0;right:4px;
+	width:17px;height:17px;
+	background:url(../i/play-close.png) no-repeat;
+}
+
+.live-game-hongbao-area .close:hover{
+	background-position:-17px 0;
+}
+
+.live-game-hongbao-area .close:active{
+	background-position:-34px 0;
+}
+
+/* 砸金蛋 */
+.smashing-eggs-area{
+	position:relative;
+	bottom:-20px;right:28px;
+	width:80px;height:100px;
+	z-index:5;
+}
+.smashing-eggs-area .eggs-btn{
+	position:relative;
+	display:block;
+	width:80px;height:100px;
+	background:url(../i/eggs.png?2016120599) no-repeat;
+}
+.smashing-eggs-area .eggs-btn .time-area{
+	padding-top:30px;
+	line-height:20px;
+}
+.smashing-eggs-area .eggs-btn:hover .time-area{
+	color:#555;
+}
+
+.smashing-eggs-area .eggs-btn .eggs-ibox{
+	display:none;
+	position:absolute;
+	left:-134px;bottom:106px;
+	padding:13px 20px 14px 26px;
+	width:180px;height:84px;
+	background:url(../i/egg-tips.png) no-repeat;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox .left{
+	float:left;
+	margin-right:18px;
+	width:60px;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox .img-box{
+	width:60px;height:60px;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox img{
+	display:block;
+	width:100%;height:100%;
+	border-radius:100%;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox .name{
+	height:22px;width:60px;
+	line-height:22px;
+	font-size:12px;color:#f46933;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	text-align:center;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox .right{
+	float:left;
+	width:102px;
+    margin-top:18px;
+}
+.smashing-eggs-area .eggs-btn .eggs-ibox .right p{
+	line-height:20px;
+	font-size:12px;color:#595959;
+}
+
+.smashing-eggs-area .eggs-btn:hover .eggs-ibox{
+	display:block;
+}

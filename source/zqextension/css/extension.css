@@ -1,0 +1,26 @@
+body.maxScrean .js-flash-panel{
+    width: calc(100% - 340px)!important;
+}
+
+body.maxScrean .live-chat-content{
+    height: 100%!important;
+    position: fixed!important;
+    right: 0!important;
+}
+
+body.maxScrean .js-right-chat-layer{
+    /*position: absolute;*/
+    height: calc(100% - 156px - 111px)!important;
+    /*top: 156px;*/
+    /*bottom: 111px;*/
+    /*right: 0px;*/
+    /*left: 0px;*/
+}
+
+body.maxScrean .slimScrollDiv{
+    height: 100%!important;
+}
+
+body.maxScrean .js-chat-msg-scroll{
+    height: 100%!important;
+}
