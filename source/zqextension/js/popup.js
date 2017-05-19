@@ -28,11 +28,17 @@ window.onload = function(){
         }
     });
 
+   chrome.runtime.onMessage.addListener(function(msg, _, sendResponse){
+            console.log("chrome.extension.onMessage.addListener");
+    });
+
     $("#adshield").bind("click", function(){
         console.log("adshield click");
         // console.log($("#adshield").is(":checked"));
         chrome.storage.local.set({"adshield":$("#adshield").is(":checked")}, function(){
         });
+
+        chrome.runtime.sendMessage({adshield:true});
     });
 
     $("#efshield").bind("click", function(){
