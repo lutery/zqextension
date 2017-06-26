@@ -1,5 +1,13 @@
 // alert(123);
 
+     chrome.extension.onRequest.addListener(
+         function(request, sender, sendResponse){
+            console.log("this is onRequest");
+            console.log(request);
+            console.log(sender);
+            console.log(sendResponse);
+         }
+     );
 //chat-flash-gg
 // $(".live-chat-content .chat-flash-gg").css('display', 'none');
 window.onload = function(){

@@ -10,7 +10,7 @@
         "default_popup": "popup.html"//点击后所展示的悬浮窗口
     },
     "content_scripts":[{// 配置网页加载后所注入的脚本
-        "matches": ["https://www.zhanqi.tv/*"],//配置所作用的网站
+        "matches": ["http://*/*","https://www.zhanqi.tv/*"],//配置所作用的网站
         "css":["css/extension.css", "css/adshield.css"],//配置注入的css文件
         "js":["js/lib/jquery-3.1.1.js","js/myjs.js"]//配置注入的js文件
     }],
