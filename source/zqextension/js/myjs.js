@@ -34,8 +34,8 @@ window.onload = function() {
     chrome.extension.onRequest.addListener(
         function(request, sender, sendResponse) {
             console.log("this is onRequest");
-            if ('adshield' in detail.message) {
-                var adshield = detail.message.adshield;
+            if ('adshield' in request.message) {
+                var adshield = request.message.adshield;
 
                 if (adshield.bShield) {
                     $("body").addClass("zqadshield");

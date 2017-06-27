@@ -36,14 +36,21 @@ window.onload = function() {
         console.log("adshield click");
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             var tab = tabs[0];
-            chrome.tabs.sendRequest(tab.id, { adshield: true }, function handler(response) {
+            var sendContent = {
+                message:{
+                    adshield:{
+                        bShield:$("#adshield").is(":checked")
+                    }
+                }
+            };
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response) {
                 console.log("this is request");
             });
         });
         // console.log($("#adshield").is(":checked"));
         chrome.storage.local.set({ "adshield": $("#adshield").is(":checked") }, function() {});
 
-        chrome.runtime.sendMessage({ adshield: true });
+        // chrome.runtime.sendMessage({ adshield: true });
     });
 
     $("#efshield").bind("click", function() {
