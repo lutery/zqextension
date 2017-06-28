@@ -1,5 +1,95 @@
 // alert(123);
 
+function adShieldNoMaxScreen(){
+
+    //算法二
+    var chatAdHeight = $("#js-activity-show").height();
+    var chatAdPaddingTop = parseInt($("#js-activity-show").css('padding-top'));
+    var chatAdPaddingBottom = parseInt($("#js-activity-show").css('padding-bottom'));
+
+    console.log('chatAdHeight=' + chatAdHeight + ', chatAdPaddingTop=' + chatAdPaddingTop + ", chatAdPaddingBottom=" + chatAdPaddingBottom);
+
+    var totalADHeight = chatAdHeight + chatAdPaddingTop + chatAdPaddingBottom;
+
+    $("body").addClass("zqadshield");
+
+    var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height() + totalADHeight;
+
+    $("#js-right-chat-panel .js-right-chat-layer").height(totalChatHeight);
+    $("#js-right-chat-panel .slimScrollDiv").height(totalChatHeight);
+    $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(totalChatHeight);
+
+    $.cookie('nomaxscreen', totalADHeight);
+
+    // 算法一
+    // $("body").addClass("zqadshield");
+
+    // //获取直播区域的高度
+    // var LRCHeight = $(".live-room-content").height();
+
+    // //获取粉丝列表的高度
+    // var fangsHeight = $("#js-right-chat-panel .js-fans-list-panel").height();
+
+    // //获取聊天输入框的高度
+    // var controlHeight = $("#js-chat-control-panel").height();
+
+    // //计算聊天信息栏在隐藏广告后的高度
+    // var chatHeight = LRCHeight - fangsHeight - controlHeight;
+
+
+    // $.cookie('LRCHeight', LRCHeight);
+    // $.cookie('fangsHeight', fangsHeight);
+    // $.cookie('controlHeight', controlHeight);
+    // $.cookie('chatHeight', $("#js-right-chat-panel .js-right-chat-layer").height());
+    // $.cookie('chatHeightSlim', $("#js-right-chat-panel .slimScrollDiv").height())
+    // $.cookie('chatHeightSlimMsg', $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height());
+
+    // console.log("chatHeight="+$("#js-right-chat-panel .js-right-chat-layer").height());
+
+    // //配置聊天信息栏的新高度
+    // $("#js-right-chat-panel .js-right-chat-layer").height(chatHeight);
+    // $("#js-right-chat-panel .slimScrollDiv").height(chatHeight);
+    // $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeight);
+}
+
+function adShieldMaxScreen(){
+
+}
+
+function adNoMaxScreen(){
+
+    // 算法二
+    var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height();
+    var totalADHeight = $.cookie('nomaxscreen');
+    var originalChatHeight = totalChatHeight - totalADHeight;
+
+    $("#js-right-chat-panel .js-right-chat-layer").height(originalChatHeight);
+    $("#js-right-chat-panel .slimScrollDiv").height(originalChatHeight);
+    $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(originalChatHeight);
+
+    $("body").removeClass("zqadshield");
+    // 算法一
+    // $("body").removeClass("zqadshield");
+
+    // // var LRCHeight = $.cookie('LRCHeight');
+    // // var fangsHeight = $.cookie('fangsHeight');
+    // // var controlHeight = $.cookie('controlHeight');
+    // var chatHeight = $.cookie('chatHeight');
+    // var chatHeightSlim = $.cookie("#js-right-chat-panel .slimScrollDiv");
+    // var chatHeightSlimMsg = $.cookie("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll");
+
+    // if (chatHeight != null) {
+    //     //配置聊天信息栏的新高度
+    //     $("#js-right-chat-panel .js-right-chat-layer").height(chatHeight);
+    //     $("#js-right-chat-panel .slimScrollDiv").height(chatHeightSlim);
+    //     $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeightSlimMsg);
+    // }
+}
+
+function adMaxScreen(){
+
+}
+
 //chat-flash-gg
 // $(".live-chat-content .chat-flash-gg").css('display', 'none');
 window.onload = function() {
@@ -38,58 +128,19 @@ window.onload = function() {
                 var adshield = request.message.adshield;
 
                 if (adshield.bShield) {
-                    $("body").addClass("zqadshield");
-
-                    //获取直播区域的高度
-                    var LRCHeight = $(".live-room-content").height();
-
-                    //获取粉丝列表的高度
-                    var fangsHeight = $("#js-right-chat-panel .js-fans-list-panel").height();
-
-                    //获取聊天输入框的高度
-                    var controlHeight = $("#js-chat-control-panel").height();
-
-                    //计算聊天信息栏在隐藏广告后的高度
-                    var chatHeight = LRCHeight - fangsHeight - controlHeight;
-
-
-                    $.cookie('LRCHeight', LRCHeight);
-                    $.cookie('fangsHeight', fangsHeight);
-                    $.cookie('controlHeight', controlHeight);
-                    $.cookie('chatHeight', $("#js-right-chat-panel .js-right-chat-layer"));
-
-                    //配置聊天信息栏的新高度
-                    $("#js-right-chat-panel .js-right-chat-layer").height(chatHeight);
-                    $("#js-right-chat-panel .slimScrollDiv").height(chatHeight);
-                    $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeight);
-                } else {
-                    $("body").removeClass("zqadshield");
-
-                    var LRCHeight = $.cookie('LRCHeight');
-                    var fangsHeight = $.cookie('fangsHeight');
-                    var controlHeight = $.cookie('controlHeight');
-                    var chatHeight = $.cookie('chatHeight');
-
-                    if (LRCHeight != null) {
-                        //获取直播区域的高度
-                        $(".live-room-content").height(LRCHeight);
+                    if ($("body").hasClass("maxScrean")){
+                        adShieldMaxScreen();
                     }
-
-                    if (fangsHeight != null) {
-                        //获取粉丝列表的高度
-                        $("#js-right-chat-panel .js-fans-list-panel").height(fangsHeight);
+                    else{
+                        adShieldNoMaxScreen();
                     }
-
-                    if (controlHeight != null) {
-                        //获取聊天输入框的高度
-                        $("#js-chat-control-panel").height(controlHeight);
+                } 
+                else {
+                    if ($("body").hasClass("maxScrean")){
+                        adMaxScreen();
                     }
-
-                    if (chatHeight != null) {
-                        //配置聊天信息栏的新高度
-                        $("#js-right-chat-panel .js-right-chat-layer").height(chatHeight);
-                        $("#js-right-chat-panel .slimScrollDiv").height(chatHeight);
-                        $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeight);
+                    else{
+                        adNoMaxScreen();
                     }
                 }
             }
