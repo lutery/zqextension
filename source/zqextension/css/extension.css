@@ -8,13 +8,19 @@ body.maxScrean .live-chat-content{
     right: 0!important;
 }
 
-body.maxScrean .js-right-chat-layer{
-    /*position: absolute;*/
+body.maxScrean div.adShield .js-right-chat-layer{
+    /*算法一*/
     height: calc(100% - 156px - 111px)!important;
+    /*算法二*/
+    /*position: absolute;*/
     /*top: 156px;*/
     /*bottom: 111px;*/
     /*right: 0px;*/
     /*left: 0px;*/
+}
+
+body.maxScrean .js-right-chat-layer {
+    height: calc(100% - 156px - 111px - 106px)!important;
 }
 
 body.maxScrean .slimScrollDiv{

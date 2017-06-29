@@ -1,4 +1,5 @@
 // alert(123);
+// #js-room-super-panel
 
 function adShieldNoMaxScreen(){
 
@@ -12,6 +13,7 @@ function adShieldNoMaxScreen(){
     var totalADHeight = chatAdHeight + chatAdPaddingTop + chatAdPaddingBottom;
 
     $("body").addClass("zqadshield");
+    $("#js-room-super-panel").addClass("adShield");
 
     var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height() + totalADHeight;
 
@@ -53,7 +55,8 @@ function adShieldNoMaxScreen(){
 }
 
 function adShieldMaxScreen(){
-
+    $("body").addClass("zqadshield");
+    $("#js-room-super-panel").addClass("adShield");
 }
 
 function adNoMaxScreen(){
@@ -68,6 +71,7 @@ function adNoMaxScreen(){
     $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(originalChatHeight);
 
     $("body").removeClass("zqadshield");
+    $("#js-room-super-panel").removeClass("adShield");
     // 算法一
     // $("body").removeClass("zqadshield");
 
@@ -87,13 +91,41 @@ function adNoMaxScreen(){
 }
 
 function adMaxScreen(){
+    var totalADHeight = $.cookie('nomaxscreen');
+    var heightFansList = $.cookie('heightFansList');
+    var heightuserOperate = $.cookie('heightuserOperate');
 
+    // $('body.maxScrean .js-right-chat-layer').css("height", "100px!important;");
+    // var heightChatLayer = $('body.maxScrean .js-right-chat-layer').height();
+    // $('body.maxScrean .js-right-chat-layer').height(heightChatLayer - totalADHeight);
+
+    $("body").removeClass("zqadshield");
+    $("#js-room-super-panel").removeClass("adShield");
 }
 
 //chat-flash-gg
 // $(".live-chat-content .chat-flash-gg").css('display', 'none');
 window.onload = function() {
     console.log("window.onload = function(){");
+
+    var chatAdHeight = $("#js-activity-show").height();
+    var chatAdPaddingTop = parseInt($("#js-activity-show").css('padding-top'));
+    var chatAdPaddingBottom = parseInt($("#js-activity-show").css('padding-bottom'));
+
+    console.log('chatAdHeight=' + chatAdHeight + ', chatAdPaddingTop=' + chatAdPaddingTop + ", chatAdPaddingBottom=" + chatAdPaddingBottom);
+
+    var totalADHeight = chatAdHeight + chatAdPaddingTop + chatAdPaddingBottom;
+    $.cookie('nomaxscreen', totalADHeight);
+
+    var heightFansList = $('.fans-list.guard-list.js-fans-list-panel').height();
+
+    console.log('heightFansList=' + heightFansList);
+    $.cookie('heightFansList', heightFansList);
+
+    var heightuserOperate = $('#js-chat-control-panel').height();
+    
+    console.log('heightuserOperate=' + heightuserOperate);
+    $.cookie('heightuserOperate', heightuserOperate);
     // alert(123);
     //隐藏聊天框上部分广告
     //  $(".live-chat-content .chat-flash-gg").css('display', 'none');
