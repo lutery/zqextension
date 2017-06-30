@@ -55,6 +55,21 @@ window.onload = function() {
 
     $("#efshield").bind("click", function() {
         console.log("efshield click");
+        chrome.tabs.query({ active: true, currentWindow: true}, function(tabs){
+            var tab = tabs[0];
+            var sendContent = {
+                message:{
+                    effectshield:{
+                        bShield:$("#efshield").is(":checked")
+                    }
+                }
+            };
+
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response){
+                console.log("this is efshield response");
+            });
+        });
+
         chrome.storage.local.set({ "efshield": $('#efshield').is(":checked") }, function() {});
     });
 

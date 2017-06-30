@@ -23,6 +23,16 @@ body.maxScrean .js-right-chat-layer {
     height: calc(100% - 156px - 111px - 106px)!important;
 }
 
+body.shield-effect #js-follow-guide-panel,
+body.shield-effect #js-share-guide-panel,
+body.shield-effect #js-gift-guide-panel,
+body.shield-effect #js-for-app-guide,
+body.shield-effect .user-goRoom,
+body.shield-effect .no-play-down-ibox
+{
+    display: none!important;
+}
+
 body.maxScrean .slimScrollDiv{
     height: 100%!important;
 }

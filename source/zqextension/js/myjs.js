@@ -1,5 +1,4 @@
 // alert(123);
-// #js-room-super-panel
 
 function adShieldNoMaxScreen(){
 
@@ -55,6 +54,7 @@ function adShieldNoMaxScreen(){
 }
 
 function adShieldMaxScreen(){
+    // 全屏状态下采用css样式的方式进行修改
     $("body").addClass("zqadshield");
     $("#js-room-super-panel").addClass("adShield");
 }
@@ -91,16 +91,17 @@ function adNoMaxScreen(){
 }
 
 function adMaxScreen(){
-    var totalADHeight = $.cookie('nomaxscreen');
-    var heightFansList = $.cookie('heightFansList');
-    var heightuserOperate = $.cookie('heightuserOperate');
-
-    // $('body.maxScrean .js-right-chat-layer').css("height", "100px!important;");
-    // var heightChatLayer = $('body.maxScrean .js-right-chat-layer').height();
-    // $('body.maxScrean .js-right-chat-layer').height(heightChatLayer - totalADHeight);
-
+    // 全屏下采用移除样式的方式进行广告的显示
     $("body").removeClass("zqadshield");
     $("#js-room-super-panel").removeClass("adShield");
+}
+
+function effectShield(){
+    $("body").addClass("shield-effect");
+}
+
+function effectDisplay(){
+    $("body").removeClass("shield-effect");
 }
 
 //chat-flash-gg
@@ -174,6 +175,16 @@ window.onload = function() {
                     else{
                         adNoMaxScreen();
                     }
+                }
+            }
+            else if ('effectshield' in request.message){
+                var effectshield = request.message.effectshield;
+
+                if (effectshield.bShield){
+                    effectShield();
+                }
+                else{
+                    effectDisplay();
                 }
             }
         }
