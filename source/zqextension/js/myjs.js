@@ -3,25 +3,33 @@
 function adShieldNoMaxScreen(){
 
     //算法二
-    var chatAdHeight = $("#js-activity-show").height();
-    var chatAdPaddingTop = parseInt($("#js-activity-show").css('padding-top'));
-    var chatAdPaddingBottom = parseInt($("#js-activity-show").css('padding-bottom'));
+    if (false == $("#js-room-super-panel").hasClass("adShield")){
+        var chatAdHeight = $("#js-activity-show").height();
+        var chatAdPaddingTop = parseInt($("#js-activity-show").css('padding-top'));
+        var chatAdPaddingBottom = parseInt($("#js-activity-show").css('padding-bottom'));
 
-    console.log('chatAdHeight=' + chatAdHeight + ', chatAdPaddingTop=' + chatAdPaddingTop + ", chatAdPaddingBottom=" + chatAdPaddingBottom);
+        console.log('chatAdHeight=' + chatAdHeight + ', chatAdPaddingTop=' + chatAdPaddingTop + ", chatAdPaddingBottom=" + chatAdPaddingBottom);
 
-    var totalADHeight = chatAdHeight + chatAdPaddingTop + chatAdPaddingBottom;
+        var totalADHeight = chatAdHeight + chatAdPaddingTop + chatAdPaddingBottom;
 
-    $("body").addClass("zqadshield");
-    $("#js-room-super-panel").addClass("adShield");
+        console.log('totalADHeight=' + totalADHeight);
 
-    var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height() + totalADHeight;
+        $("body").addClass("zqadshield");
+        $("#js-room-super-panel").addClass("adShield");
 
-    $("#js-right-chat-panel .js-right-chat-layer").height(totalChatHeight);
-    $("#js-right-chat-panel .slimScrollDiv").height(totalChatHeight);
-    $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(totalChatHeight);
+        console.log('js-right-chat-layer height=' + $("#js-right-chat-panel .js-right-chat-layer").height());
 
-    $.cookie('nomaxscreen', totalADHeight);
+        var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height() + totalADHeight;
 
+        console.log('totalChatHeight=' + totalChatHeight);
+
+
+        $("#js-right-chat-panel .js-right-chat-layer").height(totalChatHeight);
+        $("#js-right-chat-panel .slimScrollDiv").height(totalChatHeight);
+        $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(totalChatHeight);
+
+        $.cookie('nomaxscreen', totalADHeight);
+    }
     // 算法一
     // $("body").addClass("zqadshield");
 
@@ -62,16 +70,18 @@ function adShieldMaxScreen(){
 function adNoMaxScreen(){
 
     // 算法二
-    var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height();
-    var totalADHeight = $.cookie('nomaxscreen');
-    var originalChatHeight = totalChatHeight - totalADHeight;
+    if ($("#js-room-super-panel").hasClass("adShield")){
+        var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height();
+        var totalADHeight = $.cookie('nomaxscreen');
+        var originalChatHeight = totalChatHeight - totalADHeight;
 
-    $("#js-right-chat-panel .js-right-chat-layer").height(originalChatHeight);
-    $("#js-right-chat-panel .slimScrollDiv").height(originalChatHeight);
-    $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(originalChatHeight);
+        $("#js-right-chat-panel .js-right-chat-layer").height(originalChatHeight);
+        $("#js-right-chat-panel .slimScrollDiv").height(originalChatHeight);
+        $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(originalChatHeight);
 
-    $("body").removeClass("zqadshield");
-    $("#js-room-super-panel").removeClass("adShield");
+        $("body").removeClass("zqadshield");
+        $("#js-room-super-panel").removeClass("adShield");
+    }
     // 算法一
     // $("body").removeClass("zqadshield");
 
@@ -102,6 +112,14 @@ function effectShield(){
 
 function effectDisplay(){
     $("body").removeClass("shield-effect");
+}
+
+function bbstyleopen(){
+    $("#js-room-super-panel").addClass("bstyle");
+}
+
+function bbstyleclose(){
+    $("#js-room-super-panel").removeClass("bstyle");
 }
 
 //chat-flash-gg
@@ -185,6 +203,16 @@ window.onload = function() {
                 }
                 else{
                     effectDisplay();
+                }
+            }
+            else if ('bbstyle' in request.message){
+                var bbstyle = request.message.bbstyle;
+
+                if (bbstyle.bstyle){
+                    bbstyleopen();
+                }
+                else{
+                    bbstyleclose();
                 }
             }
         }

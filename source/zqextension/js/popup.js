@@ -75,6 +75,21 @@ window.onload = function() {
 
     $("#bbstyle").bind("click", function() {
         console.log("bbstyle click");
+        chrome.tabs.query({ active: true, currentWindow: true}, function(tabs){
+            var tab = tabs[0];
+            var sendContent = {
+                message:{
+                    bbstyle:{
+                        bstyle:$("#bbstyle").is(":checked")
+                    }
+                }
+            };
+
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response){
+                console.log("this is bbstyle response");
+            });
+        });
+
         chrome.storage.local.set({ "bbstyle": $('#bbstyle').is(":checked") }, function() {});
     });
 }

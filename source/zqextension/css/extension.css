@@ -1,8 +1,8 @@
-body.maxScrean .js-flash-panel{
+body.maxScrean div.bstyle .js-flash-panel{
     width: calc(100% - 340px)!important;
 }
 
-body.maxScrean .live-chat-content{
+body.maxScrean div.bstyle .live-chat-content{
     height: 100%!important;
     position: fixed!important;
     right: 0!important;
