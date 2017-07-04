@@ -145,29 +145,57 @@ window.onload = function() {
     
     console.log('heightuserOperate=' + heightuserOperate);
     $.cookie('heightuserOperate', heightuserOperate);
-    // alert(123);
-    //隐藏聊天框上部分广告
-    //  $(".live-chat-content .chat-flash-gg").css('display', 'none');
+    
+    // chrome.extension.sendRequest({status:"onload"}, function(response){
+    //     if (typeof(response) == "undefined") { 
+    //         return;
+    //     }  
 
-    //  //上部分广告区占用区域
-    //  $("#js-activity-show").css('display', 'none');
+    //     var shieldInfo = response.shieldInfo;
 
-    //  //获取直播区域的高度
-    //  var LRCHeight = $(".live-room-content").height();
+    //     if ('adshield' in shieldInfo){
+    //         var adshield = shieldInfo.adshield;
 
-    //  //获取粉丝列表的高度
-    //  var fangsHeight = $("#js-right-chat-panel .js-fans-list-panel").height();
+    //         if (adshield.bShield) {
+    //             if ($("body").hasClass("maxScrean")){
+    //                 adShieldMaxScreen();
+    //             }
+    //             else{
+    //                 adShieldNoMaxScreen();
+    //             }
+    //         } 
+    //         else {
+    //             if ($("body").hasClass("maxScrean")){
+    //                 adMaxScreen();
+    //             }
+    //             else{
+    //                 adNoMaxScreen();
+    //             }
+    //         }
+    //     }
 
-    //  //获取聊天输入框的高度
-    //  var controlHeight = $("#js-chat-control-panel").height();
+    //     if ('effectshield' in shieldInfo){
+    //         var effectshield = shieldInfo.effectshield;
 
-    //  //计算聊天信息栏在隐藏广告后的高度
-    //  var chatHeight = LRCHeight - fangsHeight - controlHeight;
+    //         if (effectshield.bShield){
+    //             effectShield();
+    //         }
+    //         else{
+    //             effectDisplay();
+    //         }
+    //     }
 
-    //  //配置聊天信息栏的新高度
-    //  $("#js-right-chat-panel .js-right-chat-layer").height(chatHeight);
-    //  $("#js-right-chat-panel .slimScrollDiv").height(chatHeight);
-    //  $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeight);
+    //     if ('bbstyle' in shieldInfo){
+    //         var effectshield = shieldInfo.effectshield;
+
+    //         if (effectshield.bShield){
+    //             effectShield();
+    //         }
+    //         else{
+    //             effectDisplay();
+    //         }
+    //     }
+    // });
 
     //detail:message sender sendResponse
     // message(any):adshield efshield bbstyle
@@ -206,13 +234,13 @@ window.onload = function() {
                 }
             }
             else if ('bbstyle' in request.message){
-                var bbstyle = request.message.bbstyle;
+               var effectshield = request.message.effectshield;
 
-                if (bbstyle.bstyle){
-                    bbstyleopen();
+                if (effectshield.bShield){
+                    effectShield();
                 }
                 else{
-                    bbstyleclose();
+                    effectDisplay();
                 }
             }
         }

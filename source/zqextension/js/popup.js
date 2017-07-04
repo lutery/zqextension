@@ -5,6 +5,33 @@
 //     // alert(123);
 //     // chrome.runtime.connect("options_ui");
 // });
+//  chrome.extension.onRequest.addListener(
+//         function(request, sender, sendResponse){
+//             if (request.status == "onload"){
+//                 chrome.storage.local.get(["adshield", "efshield", "bbstyle"], function(items) {
+//                     console.log(items);
+
+//                     var sendContent = {
+//                         shieldInfo:{
+//                             adshield:{
+//                                 bShield:items.adshield
+//                             },
+//                             effectshield:{
+//                                 bShield:items.efshield
+//                             },
+//                             bbstyle:{
+//                                 bstyle:items.bbstyle
+//                             }
+//                         }
+//                     };
+
+//                     sendResponse(sendContent);
+//                 });
+//             }
+//             else{
+//                 sendResponse({shieldInfo:{}});
+//             }
+//     });
 
 window.onload = function() {
     // console.log("window onload");
@@ -28,9 +55,9 @@ window.onload = function() {
         }
     });
 
-    chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
-        console.log("chrome.extension.onMessage.addListener");
-    });
+    // chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
+    //     console.log("chrome.extension.onMessage.addListener");
+    // });
 
     $("#adshield").bind("click", function() {
         console.log("adshield click");
