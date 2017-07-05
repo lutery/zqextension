@@ -146,56 +146,56 @@ window.onload = function() {
     console.log('heightuserOperate=' + heightuserOperate);
     $.cookie('heightuserOperate', heightuserOperate);
     
-    // chrome.extension.sendRequest({status:"onload"}, function(response){
-    //     if (typeof(response) == "undefined") { 
-    //         return;
-    //     }  
+    chrome.extension.sendRequest({status:"onload"}, function(response){
+        if (typeof(response) == "undefined") { 
+            return;
+        }  
 
-    //     var shieldInfo = response.shieldInfo;
+        var shieldInfo = response.shieldInfo;
 
-    //     if ('adshield' in shieldInfo){
-    //         var adshield = shieldInfo.adshield;
+        if ('adshield' in shieldInfo){
+            var adshield = shieldInfo.adshield;
 
-    //         if (adshield.bShield) {
-    //             if ($("body").hasClass("maxScrean")){
-    //                 adShieldMaxScreen();
-    //             }
-    //             else{
-    //                 adShieldNoMaxScreen();
-    //             }
-    //         } 
-    //         else {
-    //             if ($("body").hasClass("maxScrean")){
-    //                 adMaxScreen();
-    //             }
-    //             else{
-    //                 adNoMaxScreen();
-    //             }
-    //         }
-    //     }
+            if (adshield.bShield) {
+                if ($("body").hasClass("maxScrean")){
+                    adShieldMaxScreen();
+                }
+                else{
+                    adShieldNoMaxScreen();
+                }
+            } 
+            else {
+                if ($("body").hasClass("maxScrean")){
+                    adMaxScreen();
+                }
+                else{
+                    adNoMaxScreen();
+                }
+            }
+        }
 
-    //     if ('effectshield' in shieldInfo){
-    //         var effectshield = shieldInfo.effectshield;
+        if ('effectshield' in shieldInfo){
+            var effectshield = shieldInfo.effectshield;
 
-    //         if (effectshield.bShield){
-    //             effectShield();
-    //         }
-    //         else{
-    //             effectDisplay();
-    //         }
-    //     }
+            if (effectshield.bShield){
+                effectShield();
+            }
+            else{
+                effectDisplay();
+            }
+        }
 
-    //     if ('bbstyle' in shieldInfo){
-    //         var effectshield = shieldInfo.effectshield;
+        if ('bbstyle' in shieldInfo){
+            var effectshield = shieldInfo.effectshield;
 
-    //         if (effectshield.bShield){
-    //             effectShield();
-    //         }
-    //         else{
-    //             effectDisplay();
-    //         }
-    //     }
-    // });
+            if (effectshield.bShield){
+                effectShield();
+            }
+            else{
+                effectDisplay();
+            }
+        }
+    });
 
     //detail:message sender sendResponse
     // message(any):adshield efshield bbstyle

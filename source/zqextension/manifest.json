@@ -21,5 +21,11 @@
     "options_ui":{//配置页面
         "page":"options.html",//配置页面的html文件
         "chrome_style":true   //配置页面的显示风格
+    },
+    "background":{
+        "scripts":[
+            "js/lib/jquery-3.1.1.js",
+            "background.js"
+        ]
     }
 }
