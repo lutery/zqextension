@@ -5,7 +5,7 @@
     "description": "manager zhanqi live",//插件的描述
     "browser_action": //配置插件在浏览器上显示图标及其相应的动作
     {
-        "default_icon": "images/icon.png",//图标
+        "default_icon": "images/zqextension.png",//图标
         "default_title": "zhanqi live",//悬浮标题
         "default_popup": "popup.html"//点击后所展示的悬浮窗口
     },
