@@ -1,9 +1,9 @@
 // alert(123);
 
-function adShieldNoMaxScreen(){
+function adShieldNoMaxScreen() {
 
     //算法二
-    if (false == $("#js-room-super-panel").hasClass("adShield")){
+    if (false == $("#js-room-super-panel").hasClass("adShield")) {
         var chatAdHeight = $("#js-activity-show").height();
         var chatAdPaddingTop = parseInt($("#js-activity-show").css('padding-top'));
         var chatAdPaddingBottom = parseInt($("#js-activity-show").css('padding-bottom'));
@@ -61,16 +61,16 @@ function adShieldNoMaxScreen(){
     // $("#js-right-chat-panel .slimScrollDiv .js-chat-msg-scroll").height(chatHeight);
 }
 
-function adShieldMaxScreen(){
+function adShieldMaxScreen() {
     // 全屏状态下采用css样式的方式进行修改
     $("body").addClass("zqadshield");
     $("#js-room-super-panel").addClass("adShield");
 }
 
-function adNoMaxScreen(){
+function adNoMaxScreen() {
 
     // 算法二
-    if ($("#js-room-super-panel").hasClass("adShield")){
+    if ($("#js-room-super-panel").hasClass("adShield")) {
         var totalChatHeight = $("#js-right-chat-panel .js-right-chat-layer").height();
         var totalADHeight = $.cookie('nomaxscreen');
         var originalChatHeight = totalChatHeight - totalADHeight;
@@ -100,26 +100,34 @@ function adNoMaxScreen(){
     // }
 }
 
-function adMaxScreen(){
+function adMaxScreen() {
     // 全屏下采用移除样式的方式进行广告的显示
     $("body").removeClass("zqadshield");
     $("#js-room-super-panel").removeClass("adShield");
 }
 
-function effectShield(){
+function effectShield() {
     $("body").addClass("shield-effect");
 }
 
-function effectDisplay(){
+function effectDisplay() {
     $("body").removeClass("shield-effect");
 }
 
-function bbstyleopen(){
+function bbstyleopen() {
     $("#js-room-super-panel").addClass("bstyle");
 }
 
-function bbstyleclose(){
+function bbstyleclose() {
     $("#js-room-super-panel").removeClass("bstyle");
+}
+
+function yhshow() {
+    $("body").removeClass("yhshield");
+}
+
+function yhshield() {
+    $("body").addClass("yhshield");
 }
 
 //chat-flash-gg
@@ -142,57 +150,62 @@ window.onload = function() {
     $.cookie('heightFansList', heightFansList);
 
     var heightuserOperate = $('#js-chat-control-panel').height();
-    
+
     console.log('heightuserOperate=' + heightuserOperate);
     $.cookie('heightuserOperate', heightuserOperate);
-    
-    chrome.extension.sendRequest({status:"onload"}, function(response){
-        if (typeof(response) == "undefined") { 
+
+    chrome.extension.sendRequest({ status: "onload" }, function(response) {
+        if (typeof(response) == "undefined") {
             return;
-        }  
+        }
 
         var shieldInfo = response.shieldInfo;
 
-        if ('adshield' in shieldInfo){
+        if ('adshield' in shieldInfo) {
             var adshield = shieldInfo.adshield;
 
             if (adshield.bShield) {
-                if ($("body").hasClass("maxScrean")){
+                if ($("body").hasClass("maxScrean")) {
                     adShieldMaxScreen();
-                }
-                else{
+                } else {
                     adShieldNoMaxScreen();
                 }
-            } 
-            else {
-                if ($("body").hasClass("maxScrean")){
+            } else {
+                if ($("body").hasClass("maxScrean")) {
                     adMaxScreen();
-                }
-                else{
+                } else {
                     adNoMaxScreen();
                 }
             }
         }
 
-        if ('effectshield' in shieldInfo){
+        if ('effectshield' in shieldInfo) {
             var effectshield = shieldInfo.effectshield;
 
-            if (effectshield.bShield){
+            if (effectshield.bShield) {
                 effectShield();
-            }
-            else{
+            } else {
                 effectDisplay();
             }
         }
 
-        if ('bbstyle' in shieldInfo){
-            var effectshield = shieldInfo.effectshield;
+        if ('bbstyle' in shieldInfo) {
+            var bbstyle = shieldInfo.bbstyle;
 
-            if (effectshield.bShield){
-                effectShield();
+            if (bbstyle.bstyle) {
+                bbstyleopen();
+            } else {
+                bbstyleclose();
             }
-            else{
-                effectDisplay();
+        }
+
+        if ('yhstyle' in shieldInfo) {
+            var yhstyle = shieldInfo.yhstyle;
+
+            if (yhstyle.bshieldyh) {
+                yhshield();
+            } else {
+                yhshow();
             }
         }
     });
@@ -207,40 +220,41 @@ window.onload = function() {
                 var adshield = request.message.adshield;
 
                 if (adshield.bShield) {
-                    if ($("body").hasClass("maxScrean")){
+                    if ($("body").hasClass("maxScrean")) {
                         adShieldMaxScreen();
-                    }
-                    else{
+                    } else {
                         adShieldNoMaxScreen();
                     }
-                } 
-                else {
-                    if ($("body").hasClass("maxScrean")){
+                } else {
+                    if ($("body").hasClass("maxScrean")) {
                         adMaxScreen();
-                    }
-                    else{
+                    } else {
                         adNoMaxScreen();
                     }
                 }
-            }
-            else if ('effectshield' in request.message){
+            } else if ('effectshield' in request.message) {
                 var effectshield = request.message.effectshield;
 
-                if (effectshield.bShield){
+                if (effectshield.bShield) {
                     effectShield();
-                }
-                else{
+                } else {
                     effectDisplay();
                 }
-            }
-            else if ('bbstyle' in request.message){
-               var effectshield = request.message.effectshield;
+            } else if ('bbstyle' in request.message) {
+                var bbstyle = request.message.bbstyle;
 
-                if (effectshield.bShield){
-                    effectShield();
+                if (bbstyle.bstyle) {
+                    bbstyleopen();
+                } else {
+                    bbstyleclose();
                 }
-                else{
-                    effectDisplay();
+            } else if ('yhstyle' in request.message) {
+                var yhstyle = request.message.yhstyle;
+
+                if (yhstyle.bshieldyh) {
+                    yhshield();
+                } else {
+                    yhshow();
                 }
             }
         }

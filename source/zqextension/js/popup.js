@@ -36,11 +36,12 @@
 window.onload = function() {
     // console.log("window onload");
 
-    chrome.storage.local.get(["adshield", "efshield", "bbstyle"], function(items) {
+    chrome.storage.local.get(["adshield", "efshield", "bbstyle", "yhstyle"], function(items) {
         console.log(items);
         $("#adshield").attr("checked", items.adshield);
         $("#efshield").attr("checked", items.efshield);
         $("#bbstyle").attr("checked", items.bbstyle);
+        $("#yhstyle").attr("checked", items.yhstyle);
     });
 
     $("#hot-word-item").on('click', function() {
@@ -64,9 +65,9 @@ window.onload = function() {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             var tab = tabs[0];
             var sendContent = {
-                message:{
-                    adshield:{
-                        bShield:$("#adshield").is(":checked")
+                message: {
+                    adshield: {
+                        bShield: $("#adshield").is(":checked")
                     }
                 }
             };
@@ -82,17 +83,17 @@ window.onload = function() {
 
     $("#efshield").bind("click", function() {
         console.log("efshield click");
-        chrome.tabs.query({ active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             var tab = tabs[0];
             var sendContent = {
-                message:{
-                    effectshield:{
-                        bShield:$("#efshield").is(":checked")
+                message: {
+                    effectshield: {
+                        bShield: $("#efshield").is(":checked")
                     }
                 }
             };
 
-            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response){
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response) {
                 console.log("this is efshield response");
             });
         });
@@ -102,21 +103,41 @@ window.onload = function() {
 
     $("#bbstyle").bind("click", function() {
         console.log("bbstyle click");
-        chrome.tabs.query({ active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             var tab = tabs[0];
             var sendContent = {
-                message:{
-                    bbstyle:{
-                        bstyle:$("#bbstyle").is(":checked")
+                message: {
+                    bbstyle: {
+                        bstyle: $("#bbstyle").is(":checked")
                     }
                 }
             };
 
-            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response){
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response) {
                 console.log("this is bbstyle response");
             });
         });
 
         chrome.storage.local.set({ "bbstyle": $('#bbstyle').is(":checked") }, function() {});
+    });
+
+    $("#yhstyle").bind("click", function() {
+        console.log("yhstyle click");
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            var tab = tabs[0];
+            var sendContent = {
+                message: {
+                    yhstyle: {
+                        bshieldyh: $("#yhstyle").is(":checked")
+                    }
+                }
+            };
+
+            chrome.tabs.sendRequest(tab.id, sendContent, function handler(response) {
+                console.log("this is bbstyle response");
+            });
+        });
+
+        chrome.storage.local.set({ "yhstyle": $('#yhstyle').is(":checked") }, function() {});
     });
 }

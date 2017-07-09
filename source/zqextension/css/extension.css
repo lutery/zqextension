@@ -1,14 +1,14 @@
-body.maxScrean div.bstyle .js-flash-panel{
+body.maxScrean div.bstyle .js-flash-panel {
     width: calc(100% - 340px)!important;
 }
 
-body.maxScrean div.bstyle .live-chat-content{
+body.maxScrean div.bstyle .live-chat-content {
     height: 100%!important;
     position: fixed!important;
     right: 0!important;
 }
 
-body.maxScrean div.adShield .js-right-chat-layer{
+body.maxScrean div.adShield .js-right-chat-layer {
     /*算法一*/
     height: calc(100% - 156px - 111px)!important;
     /*算法二*/
@@ -28,15 +28,20 @@ body.shield-effect #js-share-guide-panel,
 body.shield-effect #js-gift-guide-panel,
 body.shield-effect #js-for-app-guide,
 body.shield-effect .user-goRoom,
-body.shield-effect .no-play-down-ibox
-{
+body.shield-effect .no-play-down-ibox {
     display: none!important;
 }
 
-body.maxScrean .slimScrollDiv{
+body.maxScrean .slimScrollDiv {
     height: 100%!important;
 }
 
-body.maxScrean .js-chat-msg-scroll{
+body.maxScrean .js-chat-msg-scroll {
     height: 100%!important;
+}
+
+body.yhshield .yanhua-gifts-ibox,
+body.yhshield .yanhua-swf-ibox,
+body.yhshield .js-winner-list-panel {
+    display: none!important;
 }
